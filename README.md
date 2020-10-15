@@ -92,6 +92,14 @@ The `$id` of `c.json` is same as `a.json`, means `c.json` wants to change someth
 
 The `$import` can also combined with `$strategy`.
 
+If `$import-path` occurs, only given path properties will be selected.
+
+#### `$import-path`
+
+Type: `List<RelativeReference>`
+
+Defines which paths import should pick.
+
 ### `$strategy`
 
 Type: `Enum`.
