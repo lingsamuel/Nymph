@@ -10,7 +10,7 @@ Although a plugin always contains many entries, the documentation assumes each j
 
 ## Basic Design
 
-A patch must contains a `Operator`.
+A patched property must contains an `operator`.
 
 A object must have a global uniqued field to identity objects. In this document, it's `$id`.
 
@@ -106,7 +106,7 @@ Avaliable values:
 
 `$strategy` doesn't control array. Array strategy is special, see `$strategy-array`.
 
-### strategy-array:
+### `$strategy-array`
 
 Type: `Enum`.
 
@@ -118,7 +118,7 @@ Avaliable values:
 
 If `$strategy-array` is `append`, some more operator can be set.
 
-#### $strategy-array-clear-specific
+#### `$strategy-array-clear-specific`
 
 Type: `List<Reference>`.
 
