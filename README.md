@@ -114,9 +114,8 @@ Type: `Enum`.
 
 Avaliable values:
 - append (default): doesn't change existed elements
+- prepend: use this if order matters
 - replace: clear all existed elements in all plugins
-
-If `$strategy-array` is `append`, some more operator can be set.
 
 #### `$strategy-array-clear-specific`
 
@@ -128,9 +127,11 @@ Clear all speciific elements in listed values.
 // c.json
 {
   "arr": {
-    "$strategy-array-clear-plugin": [
+    "$strategy-array-clear-speciifc": [
       "b.json#/arr",
       "c.json#/arr/0",
+      "c.json#/arr/0-10", // clear index from 0 to 10
+      "c.json#/arr/!4", // except index 4
     ],
     "$value": [
       {
@@ -141,17 +142,11 @@ Clear all speciific elements in listed values.
 }
 ```
 
-### `$ref`
-
-
-
 ### `$remove`
 
 Type: `List<String>`.
 
 `$remove` contains a name list of property which should be removed.
-
-### `$replace`
 
 ### `$keep`
 
@@ -161,7 +156,7 @@ Type: `Enum`.
 
 Available values:
 - exist (default): This prevents or warning any plugins wants to remove this property.
-- ref: This validate the final value of this property is the given reference.
+- ref: Meaningless. See [`$keep-ref`](#keep-ref).
 
 If `$keep` is `ref`, a `$keep-ref` operator must be set.
 
@@ -169,4 +164,7 @@ If `$keep` is `ref`, a `$keep-ref` operator must be set.
 
 Type: `Reference`.
 
+This validate the final value of this property is the given reference.
+
 ### `$match`
+
