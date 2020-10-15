@@ -10,9 +10,9 @@ Although a plugin always contains many entries, the documentation assumes each j
 
 ## Basic Design
 
-A patched property must contains an `operator`.
+A patched property must contain an `operator`.
 
-A object must have a plugin-wide uniqued field to identity objects. In this document, it's `$id`.
+A object must have a plugin-wide unique field to identity objects. In this document, it's `$id`.
 
 ### Master File
 
@@ -26,7 +26,7 @@ Example in this documentation won't show this while the example only contains ob
 
 Type: `Reference`.
 
-`$import` generates a object by reference.
+`$import` generates an object by reference.
 
 <details>
 <summary>Example</summary>
@@ -134,7 +134,7 @@ Available values:
 
 Type: `Reference`.
 
-This validate the final value of this property is the given reference.
+This validates the final value of this property is the given reference.
 
 ## List Operator
 
@@ -149,7 +149,7 @@ Type: `Enum`.
 Available values:
 - append (default): doesn't change existed elements
 - prepend: use this if order matters
-- replace: clear all existed elements in all plugins, highest priority.
+- replace: clear all existed elements in all plugins, has the highest priority.
 
 If a `$strategy-list-hybrid` operator is set, this property is fallback strategy. 
 
@@ -161,7 +161,7 @@ Only works for `List` property.
 
 Type: `List<Reference | PropertyMatcher>`.
 
-Clear all speciific elements in listed values.
+Clear all specific elements in listed values.
 
 <details>
 <summary>Example</summary>
