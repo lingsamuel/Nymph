@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "module": "commonjs",
-    "noImplicitAny": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "module": "ESNext",
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "outDir": "./dist",
     "preserveConstEnums": true,
     "removeComments": true,
     "sourceMap": true,
-    "target": "ES5"
+    "target": "ESNext",
+    "moduleResolution": "node"
   },
   "include": [
-    "./src/index.ts",
-    "./src/modules.d.ts"
+    "./src/**/*",
   ],
   "exclude": [
     "node_modules"

@@ -1,10 +1,10 @@
 # Nymph
 
-*Nymph* is a patch engine for (serialized) typed object database in JSON form.
+*Nymph* is a patch engine for (serialized) typed object **database** in JSON form.
 
-This engine is originally developed for a extendable mod system. Each `json` file considered as a *plugin*.
+This engine is originally developed for an extendable mod system. Each `json` file considered as a *plugin*.
 
-Nymph is highly inspired by the mod system of `The Elder Scrolls` and other games. Aims to keep the plguin flexibility and maximum compatibility between plugins.
+Nymph is highly inspired by the mod system of `The Elder Scrolls` and other games. Aims to keep the plugin flexibility and maximum compatibility between plugins.
 
 Although a plugin always contains many entries, the documentation assumes each json contains only one entry/object.
 
@@ -33,7 +33,7 @@ Type: `Reference`.
 
 ```javascript
 // a.json
-{
+const a = {
   "$id": "obj-a",
   "a": {
     "prop": "property A"
@@ -44,7 +44,7 @@ Type: `Reference`.
 
 ```javascript
 // b.json
-{
+const b = {
   "$id": "obj-b",
   "b": {
     "prop": "property B"
@@ -59,7 +59,7 @@ Type: `Reference`.
 
 ```javascript
 // c.json
-{
+const c = {
   "$id": "obj-a",
   "a": {
     "$import": "obj-b#/b", // typically json reference format is `b.json#/xxx`, but we use `$id` here.
@@ -76,7 +76,7 @@ The `$id` of `c.json` is same as `a.json`, means `c.json` wants to change someth
 
 ```javascript
 // result
-{
+const result = {
   "$id": "obj-a",
   "a": {
     "prop": "property B",
@@ -106,11 +106,11 @@ Type: `Enum`.
 
 `$strategy` points how object merge works.
 
-Avaliable values:
+Available values:
 - merge (default): will add all new properties and replace all existed properties to object. Unlisted properties keep unchanged.
 - replace: Replace whole object. This doesn't control the list property.
 - replace-exist: adds nothing, only replaces all existed properties to object.
-- add-newly: replaces nothing, only adds all new properties to object.
+- add-new: replaces nothing, only adds all new properties to object.
 
 `$strategy` doesn't control list. List strategy is special, see `$strategy-list`.
 

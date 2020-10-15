@@ -7,52 +7,60 @@
 // type Punctuation = "_" | "-"
 // type ValidChar = Alpha | Digit | Punctuation;
 
-type RecordID = string;
-type PropertyName = string;
-type EntryReference = string;
+export type RecordID = string;
+export type PropertyName = string;
+export type EntryReference = string;
 
-type PatchStrategy = {
-    "$strategy": "merge" | "replace" | "replace-exist" | "add-newly",
+export type PatchStrategy = {
+    "$strategy": PatchStrategyType,
 }
 
-type PatchImport = {
+export type PatchStrategyType = "merge" | "replace" | "replace-exist" | "add-newly";
+
+export type PatchImport = {
     "$import": EntryReference,
 }
 
-type PatchRemove = {
+export type PatchRemove = {
     "$remove": PropertyName[],
 }
 
-type PatchKeep = {
+export type PatchKeep = {
     "$keep": "exist"
 } | {
     "$keep": "ref",
     "$keep-ref": EntryReference,
 }
 
-type PatchNonList = PatchStrategy & Partial<PatchImport | PatchRemove | PatchKeep>;
+export type PatchNonList = PatchStrategy & Partial<PatchImport | PatchRemove | PatchKeep>;
 
 
 
-type PatchListStrategy = PatchListStrategyMutate | PatchListStrategyReplace;
+export type PatchListStrategy = PatchListStrategyMutate | PatchListStrategyReplace;
 
-type PatchListStrategyMutate = {
+export type PatchListStrategyType = PatchListStrategyMutateType | PatchListStrategyReplaceType;
+
+export type PatchListStrategyMutate = {
     "$strategy-list": "append" | "prepend",
 }
 
-type PatchListStrategyReplace = {
+export type PatchListStrategyMutateType = "append" | "prepend";
+
+export type PatchListStrategyReplace = {
     "$strategy-list": "replace",
 }
 
-type PatchListRemove = {
+export type PatchListStrategyReplaceType = "replace";
+
+export type PatchListRemove = {
     "$list-remove": (EntryReference | PropertyMatcher)[],
 }
 
-type PatchListMutateElement = {
+export type PatchListMutateElement = {
     "$list-mutate": PatchListMutateElementDef,
 }
 
-type PatchListMutateElementDef = {
+export type PatchListMutateElementDef = {
     "$op": "replace",
     "$source": number,
     "$to": ListElementMatcher, // `-` means last. `-N` means N before last. Reference must be single, not range
@@ -64,39 +72,57 @@ type PatchListMutateElementDef = {
     "$index-type": "before" | "after",
 }
 
-type PatchListKeepElement = {
+export type PatchListKeepElement = {
     "$list-keep": {
         "$to": EntryReference,
     }
 } & PatchKeep;
 
-type ListElementMatcher = PropertyMatcher | number | "-";
+export type ListElementMatcher = PropertyMatcher | number | "-";
 
-type PropertyMatcher = FirstFoundMatcher | LastFoundMatcher | EntryReference;
+export type PropertyMatcher = FirstFoundMatcher | LastFoundMatcher | EntryReference;
 
-type FirstFoundMatcher = Matcher & {
+export type FirstFoundMatcher = Matcher & {
     "$found-strategy": "first"
 }
 
-type LastFoundMatcher = Matcher & {
+export type LastFoundMatcher = Matcher & {
     "$found-strategy": "last"
 }
 
-type Matcher = {
+export type Matcher = {
     "$matcher": {
         [key: string]: Condition,
     }
 }
 
-type Condition = {
+export type Condition = {
     "$equals": any
 } | {
     "$script": string, // Valid variable: `target`, `self`
 }
 
-type ListPropertyPatch<T> = {
+export type ListPropertyPatch<T> = {
     "$value": T[],
 } & (PatchListStrategyReplace |
     (PatchListStrategyMutate &
         Partial<PatchListRemove | PatchListMutateElement | PatchListKeepElement>
     ));
+
+export function isObject(value: any) {
+    // Basic check for Type object that's not null
+    if (typeof value === "object" && value !== null) {
+        // If Object.getPrototypeOf supported, use it
+        if (typeof Object.getPrototypeOf === "function") {
+            const proto = Object.getPrototypeOf(value);
+            return proto === Object.prototype || proto === null;
+        }
+
+        // Otherwise, use internal class
+        // This should be reliable as if getPrototypeOf not supported, is pre-ES5
+        return Object.prototype.toString.call(value) === "[object Object]";
+    }
+
+    // Not an object
+    return false;
+}
