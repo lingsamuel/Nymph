@@ -1,10 +1,10 @@
 # Nymph
 
-*Nymph* is a patch engine for (serialized) typed object **database** in JSON form.
+*Nymph* is a patch engine for (serialized) typed object **database** in JSON format.
 
 This engine is originally developed for an extendable mod system. Each `json` file considered as a *plugin*.
 
-Nymph is highly inspired by the mod system of `The Elder Scrolls` and other games. Aims to keep the plugin flexibility and maximum compatibility between plugins.
+Nymph is highly inspired by the mod system of `The Elder Scrolls`('s disadvantages) and other games. Aims to keep the plugin flexibility and maximum compatibility between plugins.
 
 Although a plugin always contains many entries, the documentation assumes each json contains only one entry/object.
 
@@ -146,7 +146,7 @@ Type: `Enum`.
 
 `$strategy-list` points how list merge works.
 
-Avaliable values:
+Available values:
 - append (default): doesn't change existed elements
 - prepend: use this if order matters
 - replace: clear all existed elements in all plugins, highest priority.
@@ -168,7 +168,7 @@ Clear all speciific elements in listed values.
 
 ```javascript
 // c.json
-{
+const c = {
   "arr": {
     "$strategy-list-remove": [
       "b.json#/arr",
