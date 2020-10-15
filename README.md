@@ -12,7 +12,7 @@ Although a plugin always contains many entries, the documentation assumes each j
 
 A patched property must contains an `operator`.
 
-A object must have a global uniqued field to identity objects. In this document, it's `$id`.
+A object must have a plugin-wide uniqued field to identity objects. In this document, it's `$id`.
 
 ### Master File
 
@@ -20,7 +20,7 @@ A plugin needs add `Master` to their definition to make reference works properly
 
 Example in this documentation won't show this while the example only contains object.
 
-## Operator
+## Non-List Operator
 
 ### `$import`
 
@@ -100,47 +100,11 @@ Type: `Enum`.
 
 Avaliable values:
 - merge (default): will add all new properties and replace all existed properties to object. Unlisted properties keep unchanged.
-- replace: Replace whole object. This doesn't control the array property.
+- replace: Replace whole object. This doesn't control the list property.
 - replace-exist: adds nothing, only replaces all existed properties to object.
 - add-newly: replaces nothing, only adds all new properties to object.
 
-`$strategy` doesn't control array. Array strategy is special, see `$strategy-array`.
-
-### `$strategy-array`
-
-Type: `Enum`.
-
-`$strategy-array` points how array merge works.
-
-Avaliable values:
-- append (default): doesn't change existed elements
-- prepend: use this if order matters
-- replace: clear all existed elements in all plugins
-
-#### `$strategy-array-clear-specific`
-
-Type: `List<Reference>`.
-
-Clear all speciific elements in listed values.
-
-```javascript
-// c.json
-{
-  "arr": {
-    "$strategy-array-clear-speciifc": [
-      "b.json#/arr",
-      "c.json#/arr/0",
-      "c.json#/arr/0-10", // clear index from 0 to 10
-      "c.json#/arr/!4", // except index 4
-    ],
-    "$value": [
-      {
-        "prop": "foo",
-      }
-    ]
-  }
-}
-```
+`$strategy` doesn't control list. List strategy is special, see `$strategy-list`.
 
 ### `$remove`
 
@@ -156,9 +120,7 @@ Type: `Enum`.
 
 Available values:
 - exist (default): This prevents or warning any plugins wants to remove this property.
-- ref: Meaningless. See [`$keep-ref`](#keep-ref).
-
-If `$keep` is `ref`, a `$keep-ref` operator must be set.
+- ref: Meaningless. See [`$keep-ref`](#keep-ref). If `ref` is set, a `$keep-ref` operator must be set, too.
 
 #### `$keep-ref`
 
@@ -166,5 +128,69 @@ Type: `Reference`.
 
 This validate the final value of this property is the given reference.
 
-### `$match`
+## List Operator
 
+### `$strategy-list`
+
+Only works for `List` property.
+
+Type: `Enum`.
+
+`$strategy-list` points how list merge works.
+
+Avaliable values:
+- append (default): doesn't change existed elements
+- prepend: use this if order matters
+- replace: clear all existed elements in all plugins, highest priority.
+
+If a `$strategy-list-hybrid` operator is set, this property is fallback strategy. 
+
+Specially, if `$strategy-list` is `replace`, it will replace existed list to self regardless, ignores any other operators.
+
+### `$strategy-list-remove`
+
+Only works for `List` property.
+
+Type: `List<Reference | PropertyMatcher>`.
+
+Clear all speciific elements in listed values.
+
+<details>
+<summary>Example</summary>
+
+```javascript
+// c.json
+{
+  "arr": {
+    "$strategy-list-remove": [
+      "b.json#/arr",
+      "c.json#/arr/0",
+      "c.json#/arr/0-10", // clear index from 0 to 10
+      "c.json#/arr/!4", // except index 4
+      { // PropertyMatcher
+        "$found-strategy": "first",
+        "$matcher": {
+          "name": {
+            "$equals": "TargetName",
+          }
+        }
+      }
+    ],
+    "$value": [
+      {
+        "prop": "foo",
+      }
+    ]
+  }
+}
+```
+
+</details>
+
+### `$strategy-list-mutate`
+
+Type: `List<HybridListPatch>`.
+
+Controls elements insert or replace explicitly. Not listed elements follows the `$strategy-list` operator.
+
+### `$strategy-list-keep`
