@@ -31,7 +31,7 @@ Type: `Reference`.
 <detail>
 <summary>Example</summary>
 
-```json
+```javascript
 // a.json
 {
   "$id": "obj-a",
@@ -42,7 +42,7 @@ Type: `Reference`.
 }
 ```
 
-```json
+```javascript
 // b.json
 {
   "$id": "obj-b",
@@ -57,7 +57,7 @@ Type: `Reference`.
 }
 ```
 
-```json
+```javascript
 // c.json
 {
   "$id": "obj-a",
@@ -74,7 +74,7 @@ In this situation, `a.json` and `b.json` are plugins predefined in system. `c.js
 
 The `$id` of `c.json` is same as `a.json`, means `c.json` wants to change something in `a.json`.
 
-```json
+```javascript
 // result
 {
   "$id": "obj-a",
@@ -124,7 +124,7 @@ Type: `List<Reference>`.
 
 Clear all speciific elements in listed values.
 
-```json
+```javascript
 // c.json
 {
   "arr": {
