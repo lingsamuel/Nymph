@@ -28,7 +28,7 @@ Type: `Reference`.
 
 `$import` generates a object by reference.
 
-<detail>
+<details>
 <summary>Example</summary>
 
 ```javascript
@@ -87,7 +87,7 @@ The `$id` of `c.json` is same as `a.json`, means `c.json` wants to change someth
   "foo": "bar"
 }
 ```
-</detail>
+</details>
 
 
 The `$import` can also combined with `$strategy`.
