@@ -147,7 +147,7 @@ If a `$strategy-list-hybrid` operator is set, this property is fallback strategy
 
 Specially, if `$strategy-list` is `replace`, it will replace existed list to self regardless, ignores any other operators.
 
-### `$strategy-list-remove`
+### `$list-remove`
 
 Only works for `List` property.
 
@@ -187,10 +187,10 @@ Clear all speciific elements in listed values.
 
 </details>
 
-### `$strategy-list-mutate`
+### `$list-mutate`
 
 Type: `List<HybridListPatch>`.
 
 Controls elements insert or replace explicitly. Not listed elements follows the `$strategy-list` operator.
 
-### `$strategy-list-keep`
+### `$list-keep`

@@ -45,11 +45,11 @@ type PatchListStrategyReplace = {
 }
 
 type PatchListRemove = {
-    "$strategy-list-remove": (EntryReference | PropertyMatcher)[],
+    "$list-remove": (EntryReference | PropertyMatcher)[],
 }
 
 type PatchListMutateElement = {
-    "$strategy-list-mutate": PatchListMutateElementDef,
+    "$list-mutate": PatchListMutateElementDef,
 }
 
 type PatchListMutateElementDef = {
@@ -65,7 +65,7 @@ type PatchListMutateElementDef = {
 }
 
 type PatchListKeepElement = {
-    "$strategy-list-keep": {
+    "$list-keep": {
         "$to": EntryReference,
     }
 } & PatchKeep;
