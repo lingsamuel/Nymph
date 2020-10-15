@@ -20,6 +20,28 @@ A plugin needs add `Master` to their definition to make reference works properly
 
 Example in this documentation won't show this while the example only contains object.
 
+### Reference String
+
+Single Reference:
+
+- `obj-id#path.to.the.key`: select key path "path.to.the.key" from `obj-id` object
+
+- `obj-id#path.to.arr/0`: select from array key path "path.to.arr", index 0
+
+- `obj-id#path.to.arr/-`: select from array key path "path.to.arr", last element
+
+- `obj-id#path.to.arr/-1`: same as `-`
+
+- `obj-id#path.to.arr/-N`: select N-th element from last 
+
+List Reference (Only for arrays):
+
+- `obj-id#path.to.the.key/0..10`: select from index 0 to 10
+
+- `obj-id#path.to.the.key/!4`: except index 4. This can be applied to other range reference
+
+- `obj-id#path.to.the.key/1,2,4..10`: index 1, 2, 4 to 10
+
 ## Non-List Operator
 
 ### `$import`
@@ -92,7 +114,43 @@ const result = {
 
 The `$import` can also combined with `$strategy`.
 
-If `$import-path` occurs, only given path properties will be selected.
+If `$import-pick` occurs, only given path properties will be selected.
+
+If `$import-no-pick` occurs, given path properties won't be selected. `$import-pick` has higher priority.
+
+If properties definition also occurs in same level, they have higher priority.
+
+```javascript
+
+const t1 = {
+    "obj": {
+        "key": "val",
+    }
+}
+
+const t2 = {
+    "obj": {
+        "key": "another-val",
+        "another-key": "val"
+    }
+}
+
+const t3 = {
+    "obj": {
+        "key": "want-val",
+    }
+}
+
+// Now I want to import all keys from `t2#obj` except `key` should be `t3#obj.key`
+const patch = {
+    "obj": {
+        "$import": "t2#obj",
+        "key": {
+            '$value': "t3#obj.key"
+        }
+    }
+}
+```
 
 #### `$import-path`
 
@@ -119,22 +177,6 @@ Available values:
 Type: `List<String>`.
 
 `$remove` contains a name list of property which should be removed.
-
-### `$keep`
-
-Type: `Enum`.
-
-`$keep` marks a property is required by this plugin.
-
-Available values:
-- exist (default): This prevents or warning any plugins wants to remove this property.
-- ref: Meaningless. See [`$keep-ref`](#keep-ref). If `ref` is set, a `$keep-ref` operator must be set, too.
-
-#### `$keep-ref`
-
-Type: `Reference`.
-
-This validates the final value of this property is the given reference.
 
 ## List Operator
 
@@ -173,7 +215,8 @@ const c = {
     "$strategy-list-remove": [
       "b.json#/arr",
       "c.json#/arr/0",
-      "c.json#/arr/0-10", // clear index from 0 to 10
+      "c.json#/arr/0/10", // clear index from 0 to 10
+      "c.json#/arr/0/-1", // clear index from 0 to 10
       "c.json#/arr/!4", // except index 4
       { // PropertyMatcher
         "$found-strategy": "first",
@@ -201,4 +244,30 @@ Type: `List<HybridListPatch>`.
 
 Controls elements insert or replace explicitly. Not listed elements follows the `$strategy-list` operator.
 
+## Flag Operator
+
+### `$keep`
+
+Type: `Enum`.
+
+`$keep` marks a property is required by this plugin.
+
+Note that `$keep` operator won't reject `$remove` or `$strategy=replace` operator, only raise warnings if violated.
+
+Available values:
+- exist (default): This prevents or warning any plugins wants to remove this property.
+- ref: Meaningless. See [`$keep-ref`](#keep-ref). If `ref` is set, a `$keep-ref` operator must be set, too.
+
+#### `$keep-ref`
+
+Type: `Reference`.
+
+This mark indicates the final value of this property should be same as the given reference.
+
 ### `$list-keep`
+
+This adds `$keep` mark to the matched elements.
+
+Note that `$keep` operator won't reject `$list-mutate` or `$strategy-list=replace` operator, only raise warnings if violated.
+
+### `$list-keep-ref`
