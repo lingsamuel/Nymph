@@ -28,12 +28,6 @@ Single Reference:
 
 - `obj-id#path.to.arr/0`: select from array key path "path.to.arr", index 0
 
-- `obj-id#path.to.arr/-`: select from array key path "path.to.arr", last element
-
-- `obj-id#path.to.arr/-1`: same as `-`
-
-- `obj-id#path.to.arr/-N`: select N-th element from last 
-
 List Reference (Only for arrays):
 
 - `obj-id#path.to.the.key/0-10`: select from index 0 to 10
@@ -41,6 +35,16 @@ List Reference (Only for arrays):
 - `obj-id#path.to.the.key/!4`: except index 4. This can be applied to other range reference
 
 - `obj-id#path.to.the.key/1,2,4-10`: index 1, 2, 4 to 10
+
+Reverse index won't support:
+
+*Nymph* aims to be a simple object database patch tool, which means the patch should know everything it wants to change.
+
+- `obj-id#path.to.arr/-`: select from array key path "path.to.arr", last element - won't support
+
+- `obj-id#path.to.arr/-1`: same as `-` - won't support
+
+- `obj-id#path.to.arr/-N`: select N-th element from last - won't support
 
 ## Non-List Operator
 
