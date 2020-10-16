@@ -229,12 +229,12 @@ Clear all specific elements in listed values.
 // c.json
 const c = {
   "arr": {
-    "$strategy-list-remove": [
-      "b.json#/arr",
-      "c.json#/arr/0",
-      "c.json#/arr/0/10", // clear index from 0 to 10
-      "c.json#/arr/0/-1", // clear index from 0 to 10
-      "c.json#/arr/!4", // except index 4
+    "$list-remove": [
+      "/0",
+      "0",
+      "/0-10", // clear index from 0 to 10
+      "0-1", // clear index from 0 to 1
+      "!4", // except index 4
       { // PropertyMatcher
         "$found-strategy": "first",
         "$matcher": {

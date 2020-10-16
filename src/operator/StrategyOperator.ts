@@ -26,8 +26,8 @@ export class StrategyOperator extends Operator {
             newList = []
         }
 
-        if (patch["$strategy-list-remove"] != undefined) {
-            const toRemove = patch["$strategy-list-remove"];
+        if (patch["$list-remove"] != undefined) {
+            const toRemove = patch["$list-remove"];
             if (typeof toRemove == "string" || Array.isArray(toRemove)) {
                 const idx = this.merger.parseIndexer(toRemove)
                 for (let i of idx) {

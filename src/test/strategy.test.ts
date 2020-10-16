@@ -61,7 +61,7 @@ const patch = [{
 }, {
     "$id": "objA",
     "arrToRemoveElement": {
-        "$strategy-list-remove": [
+        "list-remove": [
             "0",
             "/1-3,!2", // 0, 1, 3
         ],
