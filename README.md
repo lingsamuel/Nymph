@@ -146,17 +146,34 @@ const patch = {
     "obj": {
         "$import": "t2#obj",
         "key": {
-            '$value': "t3#obj.key"
+            "$keep-ref": "t3#obj.key",
+            "$value": "t3#obj.key"
         }
+    }
+}
+
+const result = {
+    "obj": {
+        "key": {
+            "$keep-ref": "t3#obj.key",
+            "$value": "want-val",
+        },
+        "another-key": "val"
     }
 }
 ```
 
-#### `$import-path`
+#### `$import-pick`
 
 Type: `List<RelativeReference>`
 
-Defines which paths import should pick.
+Defines which property `$import` should pick.
+
+#### `$import-no-pick`
+
+Type: `List<RelativeReference>`
+
+Defines which property `$import` should not pick.
 
 ### `$strategy`
 
@@ -246,28 +263,40 @@ Controls elements insert or replace explicitly. Not listed elements follows the 
 
 ## Flag Operator
 
+Flag operators add flags to properties.
+
+All available flags:
+
+- `$keep`: Indicates property shouldn't be removed.
+- `$keep-ref`: Indicates property value should exactly same as a reference.
+
+Flags won't change any operator behavior, it only raises warnings if violates flag semantics.
+
 ### `$keep`
 
 Type: `Enum`.
 
-`$keep` marks a property is required by this plugin.
+`$keep` operator also is a *flag*.
 
-Note that `$keep` operator won't reject `$remove` or `$strategy=replace` operator, only raise warnings if violated.
+Property has `$keep` flag indicates that the plugin requires its existence to work properly and shouldn't be removed by other plugins.
+
+Note that `$keep` flag won't reject `$remove` or `$strategy=replace` operator, only raise warnings if violated.
 
 Available values:
-- exist (default): This prevents or warning any plugins wants to remove this property.
+- exist (default): This flag warning if any plugin wants to remove this property.
+- none: This flag raise warning if any plugin wants to add this property.
 - ref: Meaningless. See [`$keep-ref`](#keep-ref). If `ref` is set, a `$keep-ref` operator must be set, too.
 
 #### `$keep-ref`
 
 Type: `Reference`.
 
-This mark indicates the final value of this property should be same as the given reference.
+This flag indicates the final value of this property should be same as the given reference.
 
 ### `$list-keep`
 
-This adds `$keep` mark to the matched elements.
+This adds `$keep` flag to the matched elements.
 
-Note that `$keep` operator won't reject `$list-mutate` or `$strategy-list=replace` operator, only raise warnings if violated.
+Note that `$keep` flag won't reject `$list-mutate` or `$strategy-list=replace` operator, only raise warnings if violated.
 
 ### `$list-keep-ref`
