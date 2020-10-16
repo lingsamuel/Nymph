@@ -53,6 +53,19 @@ const patch = [{
             "d",
         ],
     },
+}, {
+    "$id": "objA",
+    "arrToRemoveElement": [
+        "1", "2", "3", "4"
+    ],
+}, {
+    "$id": "objA",
+    "arrToRemoveElement": {
+        "$strategy-list-remove": [
+            "0",
+            "/1-3,!2", // 0, 1, 3
+        ],
+    }
 }
 ];
 
@@ -86,5 +99,8 @@ test("Basic merge strategy", () => {
     expect(nymph.processed["objA"]["arrBePrepended"].length).toBe(4);
     expect(nymph.processed["objA"]["arrBePrepended"][0]).toBe("d");
 
+    // Strategy-list-remove
+    expect(nymph.processed["objA"]["arrToRemoveElement"].length).toBe(1);
+    expect(nymph.processed["objA"]["arrToRemoveElement"][0]).toBe("3");
 });
 

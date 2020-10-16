@@ -1,4 +1,4 @@
-import {PatchListStrategyType, PatchStrategyType} from "./type";
+import {isObject, PatchListStrategyType, PatchStrategyType} from "./type";
 import {Operator} from "./operator/Operator";
 import {StrategyOperator} from "./operator/StrategyOperator";
 import {RemoveOperator} from "./operator/RemoveOperator";
@@ -99,5 +99,93 @@ export class Nymph {
     }
 
     private processArray() {
+    }
+
+    parseIndexer(ref: string | string[]): number[] {
+        let indexer = "";
+        if (Array.isArray(ref)) {
+            let indexes = []
+            for (let r of ref) {
+                if (r.includes("/")) { // /0,1,2
+                    indexes.push(r.split("/")[1].trim())
+                } else if (r.includes(",")) { // 0,1,2
+                    indexes.push(r.trim())
+                } else if (!isNaN(+r)) {
+                    indexes.push(r)
+                }
+            }
+            indexer = indexes.join(",")
+        } else if (ref.includes("/")) {
+            indexer = ref.split("/")[1].trim();
+        } else if (ref.includes(",")) {
+            indexer = ref.trim()
+        } else if (!isNaN(+ref)) {
+            indexer = ref
+        }
+
+        if (indexer != "") {
+            const indexAccessors = indexer.split(",")
+            let includeIndexes = []
+            let excludeIndexes = []
+            for (let indexAccessor of indexAccessors) {
+                let exclusion = false;
+                if (indexAccessor.startsWith("!")) {
+                    exclusion = true
+                    indexAccessor = indexAccessor.substring(1)
+                }
+                const indexes = []
+                if (indexAccessor.includes("-")) {
+                    // range
+                    const start = parseInt(indexAccessor.split("-")[0])
+                    const end = parseInt(indexAccessor.split("-")[1])
+                    for (let i = start; i <= end; i++) {
+                        indexes.push(i)
+                    }
+                } else {
+                    indexes.push(parseInt(indexAccessor))
+                }
+                if (exclusion) {
+                    excludeIndexes.push(...indexes)
+                } else {
+                    includeIndexes.push(...indexes)
+                }
+            }
+
+            includeIndexes = includeIndexes.filter((val, i, arr) => arr.indexOf(val) === i);
+            excludeIndexes = excludeIndexes.filter((val, i, arr) => arr.indexOf(val) === i);
+            includeIndexes = includeIndexes.filter((val) => !excludeIndexes.includes(val))
+            return includeIndexes
+        }
+        return []
+    }
+
+    parseReference(ref: string): any {
+        const id = ref.split("#")[0]
+        const accessor = ref.split("#")[1]
+        const path = accessor.split(".")
+        path[path.length - 1] = path[path.length - 1].split("/")[0]
+
+        let obj = this.database[id]
+        for (let key of path) {
+            if (obj[key] == undefined) {
+                return {}
+            }
+            obj = obj[key]
+        }
+        if (isObject(obj)) {
+            return obj
+        } else if (Array.isArray(obj)) {
+            let includeIndexes = this.parseIndexer(ref)
+            let result = []
+            for (let i of includeIndexes) {
+                if (obj.length > i) {
+                    result.push(obj[i])
+                }
+            }
+            return result
+        } else {
+            logger.log(`Unknown status: ${obj}`)
+        }
+        return []
     }
 }

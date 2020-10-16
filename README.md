@@ -36,11 +36,11 @@ Single Reference:
 
 List Reference (Only for arrays):
 
-- `obj-id#path.to.the.key/0..10`: select from index 0 to 10
+- `obj-id#path.to.the.key/0-10`: select from index 0 to 10
 
 - `obj-id#path.to.the.key/!4`: except index 4. This can be applied to other range reference
 
-- `obj-id#path.to.the.key/1,2,4..10`: index 1, 2, 4 to 10
+- `obj-id#path.to.the.key/1,2,4-10`: index 1, 2, 4 to 10
 
 ## Non-List Operator
 

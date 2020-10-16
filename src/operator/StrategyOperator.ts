@@ -19,10 +19,28 @@ export class StrategyOperator extends Operator {
         if (strategy == "replace") {
             return patch["$value"];
         }
+
+        // 处理 list-operator
+        let newList = patch["$value"];
+        if (newList == undefined) {
+            newList = []
+        }
+
+        if (patch["$strategy-list-remove"] != undefined) {
+            const toRemove = patch["$strategy-list-remove"];
+            if (typeof toRemove == "string" || Array.isArray(toRemove)) {
+                const idx = this.merger.parseIndexer(toRemove)
+                for (let i of idx) {
+                    delete base[i]
+                }
+                base = base.filter(x => x != null)
+            }
+        }
+
         if (strategy == "append") {
-            return base.concat(patch["$value"])
+            return base.concat(newList)
         } else if (strategy == "prepend") {
-            return patch["$value"].concat(base)
+            return newList.concat(base)
         } else {
             logger.log(`Unknown strategy-list ${strategy}`);
         }
