@@ -1,6 +1,7 @@
 import {logger} from "../merger";
 import {Operator} from "./Operator";
 import {isObject} from "../type";
+import {ListElementMatcherOperator} from "./ListMatcher";
 
 export class StrategyOperator extends Operator {
     // Strategy Operator process basic properties changes
@@ -36,6 +37,14 @@ export class StrategyOperator extends Operator {
                 base = base.filter(x => x != null)
             }
         }
+        if (patch["$list-remove-matcher"] != undefined) {
+            const matcher = new ListElementMatcherOperator(patch["$list-remove-matcher"])
+            const idx = matcher.find(base);
+            for (let i of idx) {
+                delete base[i]
+            }
+            base = base.filter(x => x != null)
+        }
 
         if (strategy == "append") {
             return base.concat(newList)
@@ -44,6 +53,7 @@ export class StrategyOperator extends Operator {
         } else {
             logger.log(`Unknown strategy-list ${strategy}`);
         }
+        return base;
     }
 
     apply(obj: { base: any; patches: any[] }): any {

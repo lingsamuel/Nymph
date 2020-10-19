@@ -2,7 +2,6 @@ import {isObject, PatchListStrategyType, PatchStrategyType} from "./type";
 import {Operator} from "./operator/Operator";
 import {StrategyOperator} from "./operator/StrategyOperator";
 import {RemoveOperator} from "./operator/RemoveOperator";
-import {StrategyListOperator} from "./operator/StrategyListOperator";
 import {KeepOperator} from "./operator/KeepOperator";
 
 class Logger {

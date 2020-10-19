@@ -246,8 +246,10 @@ const c = {
       "/0-10", // clear index from 0 to 10
       "0-1", // clear index from 0 to 1
       "!4", // except index 4
-      { // PropertyMatcher
-        "$found-strategy": "first",
+    ],
+    "$list-remove-matcher": [
+      { // ListMatcher
+        "$find-strategy": "first",
         "$matcher": {
           "name": {
             "$equals": "TargetName",

@@ -34,7 +34,6 @@ export type PatchKeep = {
 export type PatchNonList = PatchStrategy & Partial<PatchImport | PatchRemove | PatchKeep>;
 
 
-
 export type PatchListStrategy = PatchListStrategyMutate | PatchListStrategyReplace;
 
 export type PatchListStrategyType = PatchListStrategyMutateType | PatchListStrategyReplaceType;
@@ -52,7 +51,7 @@ export type PatchListStrategyReplace = {
 export type PatchListStrategyReplaceType = "replace";
 
 export type PatchListRemove = {
-    "$list-remove": (EntryReference | PropertyMatcher)[],
+    "$list-remove": (EntryReference | ListMatcher)[],
 }
 
 export type PatchListMutateElement = {
@@ -77,36 +76,31 @@ export type PatchListKeepElement = {
     }
 } & PatchKeep;
 
-export type ListElementMatcher = PropertyMatcher | number | "-";
+export type ListElementMatcher = ListMatcher | number | "-" | EntryReference;
 
-export type PropertyMatcher = FirstFoundMatcher | LastFoundMatcher | EntryReference;
+export type ListMatcherStrategy = "first" | "last" | "all";
 
-export type FirstFoundMatcher = Matcher & {
-    "$found-strategy": "first"
-}
-
-export type LastFoundMatcher = Matcher & {
-    "$found-strategy": "last"
-}
+export type ListMatcher = {
+    "$matcher": Matcher,
+    "$find-strategy": ListMatcherStrategy,
+};
 
 export type Matcher = {
-    "$matcher": {
-        [key: string]: Condition,
-    }
-}
+    [key: string]: Condition,
+} | string | number;
 
 export type Condition = {
     "$equals": any
-} | {
+}; /* | {
     "$script": string, // Valid variable: `target`, `self`
-}
+}*/
 
 export type ListPropertyPatch<T> = {
     "$value": T[],
 } & (PatchListStrategyReplace |
     (PatchListStrategyMutate &
         Partial<PatchListRemove | PatchListMutateElement | PatchListKeepElement>
-    ));
+        ));
 
 export function isObject(value: any) {
     // Basic check for Type object that's not null
