@@ -1,64 +1,15 @@
 import {logger} from "../merger";
 import {Operator} from "./Operator";
 import {isObject} from "../type";
-import {ListElementMatcherOperator} from "./ListMatcher";
+import {ListMergeOperator} from "./ListMergeOperator";
 
-export class StrategyOperator extends Operator {
-    // Strategy Operator process basic properties changes
+export class MergeOperator extends Operator {
     op(): string {
         return "$strategy";
     }
 
-    mergeList(base: any[], patch: {
-        "$value": any[]
-    } & any) {
-        let strategy = patch["$strategy-list"];
-        if (strategy == undefined) {
-            strategy = "append";
-            patch["$strategy-list"] = strategy;
-        }
-        if (strategy == "replace") {
-            return patch["$value"];
-        }
-
-        // 处理 list-operator
-        let newList = patch["$value"];
-        if (newList == undefined) {
-            newList = []
-        }
-
-        if (patch["$list-remove"] != undefined) {
-            const toRemove = patch["$list-remove"];
-            if (typeof toRemove == "string" || Array.isArray(toRemove)) {
-                const idx = this.merger.parseIndexer(toRemove)
-                for (let i of idx) {
-                    delete base[i]
-                }
-                base = base.filter(x => x != null)
-            }
-        }
-        if (patch["$list-remove-matcher"] != undefined) {
-            const matcher = new ListElementMatcherOperator(patch["$list-remove-matcher"])
-            const idx = matcher.find(base);
-            for (let i of idx) {
-                delete base[i]
-            }
-            base = base.filter(x => x != null)
-        }
-
-        if (strategy == "append") {
-            return base.concat(newList)
-        } else if (strategy == "prepend") {
-            return newList.concat(base)
-        } else {
-            logger.log(`Unknown strategy-list ${strategy}`);
-        }
-        return base;
-    }
-
-    apply(obj: { base: any; patches: any[] }): any {
-        let base = obj.base;
-        for (let patch of obj.patches) {
+    apply(base: object, patches: object[]): object {
+        for (let patch of patches) {
             let strategy = patch[this.op()];
             if (strategy == undefined) {
                 strategy = "merge";
@@ -89,7 +40,7 @@ export class StrategyOperator extends Operator {
                         } else if (isObject(patchProp)) {
                             // 原值是 array，新值是 object，处理 strategy-list operator
                             // 处理 $strategy-list 等
-                            base[key] = this.mergeList(baseProp, patchProp)
+                            base[key] = this.newOp(ListMergeOperator).apply(baseProp, patchProp)
                         } else {
                             // 其他情形均不合法
                             logger.log(`Cannot merge ${patchProp} to array (key: ${key})`);

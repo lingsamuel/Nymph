@@ -11,9 +11,8 @@ export abstract class FlagOperator extends Operator {
 
     }
 
-    apply(obj: { base: any, patches: any[] }): any {
-        let base = obj.base;
-        for (let patch of obj.patches) {
+    apply(base: object, patches: object[]): object {
+        for (let patch of patches) {
             let properties = patch[this.op()];
             if (properties != undefined) {
                 if (typeof properties == "string") {

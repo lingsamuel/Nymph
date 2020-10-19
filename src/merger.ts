@@ -1,6 +1,6 @@
 import {isObject, PatchListStrategyType, PatchStrategyType} from "./type";
 import {Operator} from "./operator/Operator";
-import {StrategyOperator} from "./operator/StrategyOperator";
+import {MergeOperator} from "./operator/MergeOperator";
 import {RemoveOperator} from "./operator/RemoveOperator";
 import {KeepOperator} from "./operator/KeepOperator";
 
@@ -42,7 +42,7 @@ export class Nymph {
     }
 
     constructor(...plugins: NymphPlugin[]) {
-        this.addOp(new StrategyOperator());
+        this.addOp(new MergeOperator());
         this.addOp(new RemoveOperator());
         this.addOp(new KeepOperator());
         this.plugins = plugins;
@@ -95,7 +95,7 @@ export class Nymph {
         patches: object[],
     }) {
         this.operators.forEach((op) => {
-            op.apply(obj)
+            op.apply(obj.base, obj.patches)
         })
     }
 

@@ -270,7 +270,7 @@ const c = {
 
 ### `$list-mutate`
 
-Type: `List<HybridListPatch>`.
+Type: `List<ListMutatePatch>`.
 
 Controls elements insert or replace explicitly. Not listed elements follows the `$strategy-list` operator.
 
