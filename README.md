@@ -2,7 +2,7 @@
 
 *Nymph* is a patch engine for (serialized) typed object **database** in JSON format.
 
-This engine is originally developed for an extendable mod system. Each `json` file considered as a *plugin*.
+This engine is originally developed for an extendable mod system. Each `json` file considered as a *plugin*. If a plugin wants to edit some entries, it should know everything about the original plugin which defines those entries. A plugin shouldn't contain anything it doesn't need.
 
 Nymph is highly inspired by the mod system of `The Elder Scrolls`('s disadvantages) and other games. Aims to keep the plugin flexibility and maximum compatibility between plugins.
 
@@ -36,7 +36,7 @@ List Reference (Only for arrays):
 
 - `obj-id#path.to.the.key/1,2,4-10`: index 1, 2, 4 to 10
 
-Reverse index won't support:
+Won't support reverse index:
 
 *Nymph* aims to be a simple object database patch tool, which means the patch should know everything it wants to change.
 
@@ -148,7 +148,11 @@ const t3 = {
 // Now I want to import all keys from `t2#obj` except `key` should be `t3#obj.key`
 const patch = {
     "obj": {
+        "$keep": [
+            "key"
+        ],
         "$import": "t2#obj",
+        "$strategy": "merge",
         "key": {
             "$keep-ref": "t3#obj.key",
             "$value": "t3#obj.key"
@@ -158,6 +162,9 @@ const patch = {
 
 const result = {
     "obj": {
+        "$keep": [
+            "key"
+        ],
         "key": {
             "$keep-ref": "t3#obj.key",
             "$value": "want-val",

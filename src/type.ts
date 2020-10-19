@@ -1,5 +1,4 @@
 // Well, it's not a good idea to validate RecordID in compile time while the real data is not in Nymph.
-
 // type LowerAlpha = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
 // type UpperAlpha = `${uppercase LowerAlpha}`
 // type Alpha = LowerAlpha | UpperAlpha;
@@ -41,7 +40,7 @@ export type PatchListStrategy = PatchListStrategyMutate | PatchListStrategyRepla
 export type PatchListStrategyType = PatchListStrategyMutateType | PatchListStrategyReplaceType;
 
 export type PatchListStrategyMutate = {
-    "$strategy-list": "append" | "prepend",
+    "$strategy-list": PatchListStrategyMutateType,
 }
 
 export type PatchListStrategyMutateType = "append" | "prepend";

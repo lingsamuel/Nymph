@@ -3,6 +3,7 @@ import {Operator} from "./operator/Operator";
 import {StrategyOperator} from "./operator/StrategyOperator";
 import {RemoveOperator} from "./operator/RemoveOperator";
 import {StrategyListOperator} from "./operator/StrategyListOperator";
+import {KeepOperator} from "./operator/KeepOperator";
 
 class Logger {
     log(...args: any[]) {
@@ -44,6 +45,7 @@ export class Nymph {
     constructor(...plugins: NymphPlugin[]) {
         this.addOp(new StrategyOperator());
         this.addOp(new RemoveOperator());
+        this.addOp(new KeepOperator());
         this.plugins = plugins;
         this.constructDatabase();
     }

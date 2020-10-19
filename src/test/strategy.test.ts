@@ -3,6 +3,10 @@ import {describe, expect, test} from '@jest/globals'
 
 const a = {
     "$id": "objA",
+    "propToKeep": "keep",
+    "propToKeep2": "keep2",
+    "propToKeepRef": "keep-ref",
+    "propToBeRef": "keep-ref",
     "objProperty": {
         "prop": "objA#objProperty.prop Value"
     },
@@ -61,11 +65,22 @@ const patch = [{
 }, {
     "$id": "objA",
     "arrToRemoveElement": {
-        "list-remove": [
+        "$list-remove": [
             "0",
             "/1-3,!2", // 0, 1, 3
         ],
     }
+}, {
+    "$id": "objA",
+    "$keep": [
+        "propToKeep"
+    ],
+    "propToKeepRef": {
+        "$keep-ref": "objA#propToBeRef"
+    }
+}, {
+    "$id": "objA",
+    "$keep": "propToKeep2",
 }
 ];
 
@@ -88,14 +103,25 @@ test("Basic merge strategy", () => {
 
     // Remove
     expect(nymph.processed["objA"]["toBeDelete"]).toBe(undefined);
+    expect(nymph.processed["objA"]["$remove-prop"].length).toBe(1);
+    expect(nymph.processed["objA"]["$remove-prop"][0]).toBe("toBeDelete");
+
+    // keep & keep-ref
+    expect(nymph.processed["objA"]["$keep-prop"].length).toBe(2);
+    expect(nymph.processed["objA"]["$keep-prop"][0]).toBe("propToKeep");
+    expect(nymph.processed["objA"]["$keep-prop"][1]).toBe("propToKeep2");
+    expect(nymph.processed["objA"]["propToKeepRef"]["$keep-ref"].length).toBe(1);
+    expect(nymph.processed["objA"]["propToKeepRef"]["$keep-ref"][0]).toBe("objA#propToBeRef");
+    expect(nymph.processed["objA"]["propToKeepRef"]["$value"]).toBe("keep-ref");
 
     // Strategy-list
+    //  replace
     expect(nymph.processed["objA"]["arrBeReplaced"].length).toBe(1);
     expect(nymph.processed["objA"]["arrBeReplaced"][0]).toBe("d");
-
+    //  append
     expect(nymph.processed["objA"]["arrBeAppended"].length).toBe(4);
     expect(nymph.processed["objA"]["arrBeAppended"][3]).toBe("d");
-
+    //  prepend
     expect(nymph.processed["objA"]["arrBePrepended"].length).toBe(4);
     expect(nymph.processed["objA"]["arrBePrepended"][0]).toBe("d");
 

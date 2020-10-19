@@ -62,7 +62,10 @@ export class StrategyOperator extends Operator {
                     }
                     let baseProp = base[key];
                     let patchProp = patch[key];
-                    if (isObject(baseProp) && isObject(patchProp)) {
+                    if (baseProp == undefined) {
+                        base[key] = patchProp;
+                    } else if (isObject(baseProp) && isObject(patchProp)) {
+                        // 原值与新值均为 object，合并
                         this.merger.mergeRecord({
                             base: baseProp,
                             patches: [
@@ -71,15 +74,61 @@ export class StrategyOperator extends Operator {
                         })
                     } else if (Array.isArray(baseProp)) {
                         if (Array.isArray(patchProp)) {
+                            // 原值是 array，新值是 array，应用默认策略 append
                             base[key].push(...patchProp)
                         } else if (isObject(patchProp)) {
+                            // 原值是 array，新值是 object，处理 strategy-list operator
                             // 处理 $strategy-list 等
                             base[key] = this.mergeList(baseProp, patchProp)
                         } else {
+                            // 其他情形均不合法
                             logger.log(`Cannot merge ${patchProp} to array (key: ${key})`);
                         }
+                    } else if (!isObject(baseProp) && isObject(patchProp)) {
+                        // 原值是基本类型，新值是 object，可能是 $import/$remove/$keep/$keep-ref
+                        // 如果是 $import，应该置于 $value 下
+                        const validProperties = ["$value", "$remove", "$keep", "$keep-ref"];
+                        let containsValidProp = false;
+                        for (let validProperty of validProperties) {
+                            if (patchProp[validProperty]) {
+                                containsValidProp = true;
+                                break;
+                            }
+                        }
+                        if (!containsValidProp) {
+                            logger.log(`[StrategyOperator] Unknown patch ${patchProp} to ${baseProp}. Key ${key}.`);
+                            return base;
+                        }
+                        // base prop turns to be a obj
+                        base[key] = {
+                            "$value": base[key],
+                        }
+                        if (patchProp["$value"] != undefined) {
+                            base[key]["$value"] = patchProp["$value"];
+                        }
+                        if (patchProp["$keep"] != undefined) {
+                            base[key]["$keep"] = patchProp["$keep"];
+                            if (typeof base[key]["$keep"] == "string") {
+                                base[key]["$keep"] = [base[key]["$keep"]];
+                            }
+                        } else if (patchProp["$keep-ref"] != undefined) {
+                            base[key]["$keep-ref"] = patchProp["$keep-ref"];
+                            if (typeof base[key]["$keep-ref"] == "string") {
+                                base[key]["$keep-ref"] = [base[key]["$keep-ref"]];
+                            }
+                        }
+                        if (patchProp["$remove"] != undefined) {
+                            base[key] = {
+                                "$remove": patchProp["$remove"],
+                            }
+                        }
+                    } else if (!isObject(baseProp) && !isObject(patchProp)) {
+                        // 均为基本类型，替换
+                        base[key] = patchProp;
                     } else {
-                        base[key] = patch[key];
+                        // 其他情形均不合法
+                        logger.log(`Cannot merge ${patchProp} to ${baseProp}`);
+                        return base;
                     }
                 }
             } else if (strategy == "replace") {
@@ -120,6 +169,7 @@ export class StrategyOperator extends Operator {
                 }
             } else {
                 logger.log(`Unknown strategy ${strategy}`);
+                return base;
             }
         }
         return base;
