@@ -6,6 +6,10 @@
 // type Punctuation = "_" | "-"
 // type ValidChar = Alpha | Digit | Punctuation;
 
+import {ListMutateDef} from "./operator/ListMutateOperator";
+import {ElementMatcherDef} from "./operator/ListMatcher";
+import {ListRemoveDef} from "./operator/ListRemoveOperator";
+
 export type RecordID = string;
 export type PropertyName = string;
 export type EntryReference = string;
@@ -34,73 +38,22 @@ export type PatchKeep = {
 export type PatchNonList = PatchStrategy & Partial<PatchImport | PatchRemove | PatchKeep>;
 
 
-export type PatchListStrategy = PatchListStrategyMutate | PatchListStrategyReplace;
-
-export type PatchListStrategyType = PatchListStrategyMutateType | PatchListStrategyReplaceType;
-
-export type PatchListStrategyMutate = {
-    "$strategy-list": PatchListStrategyMutateType,
-}
-
-export type PatchListStrategyMutateType = "append" | "prepend";
-
-export type PatchListStrategyReplace = {
-    "$strategy-list": "replace",
-}
-
-export type PatchListStrategyReplaceType = "replace";
-
-export type PatchListRemove = {
-    "$list-remove": (EntryReference | ListMatcher)[],
-}
-
-export type PatchListMutateElement = {
-    "$list-mutate": PatchListMutateElementDef,
-}
-
-export type PatchListMutateElementDef = {
-    "$op": "replace",
-    "$source": number,
-    "$to": ListElementMatcher, // `-` means last. `-N` means N before last. Reference must be single, not range
-    "$index-type": "at",
-} | {
-    "$op": "insert",
-    "$source": number,
-    "$to": ListElementMatcher,
-    "$index-type": "before" | "after",
-}
-
 export type PatchListKeepElement = {
     "$list-keep": {
         "$to": EntryReference,
     }
 } & PatchKeep;
 
-export type ListElementMatcher = ListMatcher | number | "-" | EntryReference;
+export type ListElementMatcherDef = ElementMatcherDef | number | "-" | EntryReference;
 
 export type ListMatcherStrategy = "first" | "last" | "all";
 
-export type ListMatcher = {
-    "$matcher": Matcher,
-    "$find-strategy": ListMatcherStrategy,
-};
-
-export type Matcher = {
-    [key: string]: Condition,
-} | string | number;
-
-export type Condition = {
-    "$equals": any
-}; /* | {
-    "$script": string, // Valid variable: `target`, `self`
-}*/
-
-export type ListPropertyPatch<T> = {
-    "$value": T[],
-} & (PatchListStrategyReplace |
-    (PatchListStrategyMutate &
-        Partial<PatchListRemove | PatchListMutateElement | PatchListKeepElement>
-        ));
+export type ListPropertyPatch = {
+    "$strategy-list": "replace",
+} | ({
+    "$strategy-list": "append" | "prepend",
+} & Partial<ListRemoveDef | ListMutateDef | PatchListKeepElement>
+    );
 
 export function isObject(value: any) {
     // Basic check for Type object that's not null

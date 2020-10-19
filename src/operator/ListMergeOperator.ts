@@ -1,8 +1,17 @@
 import {Operator} from "./Operator";
-import {ListElementMatcherOperator} from "./ListMatcher";
 import {logger} from "../merger";
-import {ListRemoveOperator} from "./ListRemoveOperator";
-import {ListRemoveMatcherOperator} from "./ListRemoveMatcherOperator";
+import {ListRemoveDef, ListRemoveOperator} from "./ListRemoveOperator";
+import {ListRemoveMatcherOperator, ListRemoveMatcherDef} from "./ListRemoveMatcherOperator";
+
+type ListMergeReplaceDef = {
+    "$strategy-list": "replace",
+};
+
+type ListMergeMergeDef = {
+    "$strategy-list": "append" | "prepend",
+} & Partial<ListRemoveDef> & Partial<ListRemoveMatcherDef>;
+
+export type ListMergeDef = ListMergeReplaceDef | ListMergeMergeDef;
 
 export class ListMergeOperator extends Operator {
 
@@ -12,11 +21,11 @@ export class ListMergeOperator extends Operator {
 
     apply(base: object[], patch: {
         "$value": any[]
-    } & any): object[] {
-        let strategy = patch["$strategy-list"];
+    } & ListMergeDef): object[] {
+        let strategy = patch[this.op()];
         if (strategy == undefined) {
             strategy = "append";
-            patch["$strategy-list"] = strategy;
+            patch[this.op()] = strategy;
         }
         if (strategy == "replace") {
             return patch["$value"];

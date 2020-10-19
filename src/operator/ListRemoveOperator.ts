@@ -1,6 +1,10 @@
 import {Operator} from "./Operator";
-import {ListElementMatcherOperator} from "./ListMatcher";
-import {logger} from "../merger";
+import {ElementMatcherDef} from "./ListMatcher";
+import {EntryReference} from "../type";
+
+export type ListRemoveDef = {
+    "$list-remove": (EntryReference | ElementMatcherDef)[],
+}
 
 export class ListRemoveOperator extends Operator {
 
@@ -10,11 +14,11 @@ export class ListRemoveOperator extends Operator {
 
     apply(base: object[], patch: {
         "$value": any[]
-    } & any): object[] {
-        if (patch["$list-remove"] != undefined) {
-            const toRemove = patch["$list-remove"];
-            if (typeof toRemove == "string" || Array.isArray(toRemove)) {
-                const idx = this.merger.parseIndexer(toRemove)
+    } & ListRemoveDef): object[] {
+        if (patch[this.op()] != undefined) {
+            const op: ListRemoveDef = patch[this.op()];
+            if (typeof op == "string" || Array.isArray(op)) {
+                const idx = this.merger.parseIndexer(op)
                 for (let i of idx) {
                     delete base[i]
                 }

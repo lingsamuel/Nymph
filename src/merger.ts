@@ -1,8 +1,8 @@
-import {isObject, PatchListStrategyType, PatchStrategyType} from "./type";
+import {isObject} from "./type";
 import {Operator} from "./operator/Operator";
 import {MergeOperator} from "./operator/MergeOperator";
-import {RemoveOperator} from "./operator/RemoveOperator";
-import {KeepOperator} from "./operator/KeepOperator";
+import {AttributesRemoveOperator} from "./operator/AttributesRemoveOperator";
+import {AttributesKeepOperator} from "./operator/AttributesKeepOperator";
 
 class Logger {
     log(...args: any[]) {
@@ -43,8 +43,8 @@ export class Nymph {
 
     constructor(...plugins: NymphPlugin[]) {
         this.addOp(new MergeOperator());
-        this.addOp(new RemoveOperator());
-        this.addOp(new KeepOperator());
+        this.addOp(new AttributesRemoveOperator());
+        this.addOp(new AttributesKeepOperator());
         this.plugins = plugins;
         this.constructDatabase();
     }

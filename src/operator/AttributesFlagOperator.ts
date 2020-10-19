@@ -1,7 +1,7 @@
 import {logger} from "../merger";
 import {Operator} from "./Operator";
 
-export abstract class FlagOperator extends Operator {
+export abstract class AttributesFlagOperator extends Operator {
 
     opProp() {
         return `${this.op()}-prop`;
@@ -11,7 +11,7 @@ export abstract class FlagOperator extends Operator {
 
     }
 
-    apply(base: object, patches: object[]): object {
+    apply(base: object, patches: any): object {
         for (let patch of patches) {
             let properties = patch[this.op()];
             if (properties != undefined) {
