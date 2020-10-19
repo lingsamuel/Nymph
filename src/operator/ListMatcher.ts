@@ -5,6 +5,8 @@ export type PrimitiveTypes = string | number;
 
 export type Condition = {
     "$equals": PrimitiveTypes,
+} | {
+    "$includes": string,
 }; /* | {
     "$script": string, // Valid variable: `target`, `self`
 }*/
@@ -19,7 +21,10 @@ class ConditionOperator {
     }
 
     match(obj: any): boolean {
-        if (obj[this.key] === this.def["$equals"]) {
+        const toMatch = obj[this.key];
+        if (this.def["$equals"] != undefined && toMatch === this.def["$equals"]) {
+            return true;
+        } else if (this.def["$includes"] != undefined && typeof toMatch == "string" && toMatch.includes(this.def["$includes"])) {
             return true;
         }
         return false;

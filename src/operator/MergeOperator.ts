@@ -13,7 +13,6 @@ export class MergeOperator extends Operator {
             let strategy = patch[this.op()];
             if (strategy == undefined) {
                 strategy = "merge";
-                patch[this.op()] = strategy;
             }
             if (strategy == "merge") {
                 // 合并

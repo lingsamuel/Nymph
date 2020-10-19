@@ -2,6 +2,7 @@ import {Operator} from "./Operator";
 import {logger} from "../merger";
 import {ListRemoveDef, ListRemoveOperator} from "./ListRemoveOperator";
 import {ListRemoveMatcherOperator, ListRemoveMatcherDef} from "./ListRemoveMatcherOperator";
+import {ListMutateOperator} from "./ListMutateOperator";
 
 type ListMergeReplaceDef = {
     "$strategy-list": "replace",
@@ -31,14 +32,15 @@ export class ListMergeOperator extends Operator {
             return patch["$value"];
         }
 
+        base = this.newOp(ListRemoveOperator).apply(base, patch);
+        base = this.newOp(ListRemoveMatcherOperator).apply(base, patch);
+        base = this.newOp(ListMutateOperator).apply(base, patch);
+
         // 处理 list-operator
         let newList = patch["$value"];
         if (newList == undefined) {
             newList = []
         }
-
-        base = this.newOp(ListRemoveOperator).apply(base, patch);
-        base = this.newOp(ListRemoveMatcherOperator).apply(base, patch);
 
         if (strategy == "append") {
             return base.concat(newList)
