@@ -190,6 +190,41 @@ const patch = [{
             }
         ],
     },
+}, {
+    "$id": "objA",
+    "objToReplace": {
+        "attr": "attr",
+    },
+    "objToReplaceExist": {
+        "attr": "attr",
+    },
+    "objToAdd": {
+        "attr": "attr",
+    },
+    "objToMerge": {
+        "attr": "attr",
+    },
+}, {
+    "$id": "objA",
+    "objToReplace": {
+        "$strategy":"replace",
+        "new": "new-attr",
+    },
+    "objToReplaceExist": {
+        "$strategy":"replace-exist",
+        "attr": "attr-changed",
+        "new": "new-attr",
+    },
+    "objToAdd": {
+        "$strategy":"add-new",
+        "attr": "attr-changed",
+        "new": "new-attr",
+    },
+    "objToMerge": {
+        "$strategy":"merge",
+        "attr": "attr-changed",
+        "new": "new-attr",
+    },
 }
 ];
 
@@ -205,6 +240,18 @@ test("Basic merge strategy", () => {
     // Merge
     expect(nymph.processed["objA"]["toBeChangeProperty"]).toBe("changed");
     expect(nymph.processed["objA"]["newProperty"]).toBe("objA#newProperty Value");
+    // Replace
+    expect(nymph.processed["objA"]["objToReplace"]["attr"]).toBe(undefined);
+    expect(nymph.processed["objA"]["objToReplace"]["new"]).toBe("new-attr");
+    // Replace-exist
+    expect(nymph.processed["objA"]["objToReplaceExist"]["attr"]).toBe("attr-changed");
+    expect(nymph.processed["objA"]["objToReplaceExist"]["new"]).toBe(undefined);
+    // Add-new
+    expect(nymph.processed["objA"]["objToAdd"]["attr"]).toBe("attr");
+    expect(nymph.processed["objA"]["objToAdd"]["new"]).toBe("new-attr");
+    // Merge
+    expect(nymph.processed["objA"]["objToMerge"]["attr"]).toBe("attr-changed");
+    expect(nymph.processed["objA"]["objToMerge"]["new"]).toBe("new-attr");
 
     // Merge Recursive
     expect(nymph.processed["objA"]["objProperty"]["prop"]).toBe("objA#objProperty.prop Value"); // 原值不变
