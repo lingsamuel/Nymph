@@ -1,4 +1,4 @@
-import {logger, NymphDataType, NymphPatchObject, NymphWrappedDataType} from "../merger";
+import {logger, NymphDataObject, NymphDataType, NymphPatchObject, NymphWrappedDataType} from "../merger";
 import {Operator} from "./Operator";
 import {ListMergeOperator} from "./ListMergeOperator";
 import {isArray, isObject, isPrimitive} from "../type";
@@ -25,7 +25,7 @@ export class MergeOperator extends Operator {
         return "$strategy";
     }
 
-    apply(base: NymphPatchObject, patch: NymphPatchObject): NymphPatchObject {
+    apply(base: NymphPatchObject, patch: NymphDataObject & MergeDef): NymphPatchObject {
         let strategy = patch[this.op()];
         if (strategy == undefined) {
             strategy = "merge";

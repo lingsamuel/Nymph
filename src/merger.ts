@@ -34,9 +34,11 @@ export type NymphObjectPropertyFlag = {
     "$keep-prop"?: string[],
 }
 
-export type NymphPatchObject = {
+export type NymphDataObject = {
     [key: string]: NymphDataType;
-} & NymphOperatorType & NymphObjectPropertyFlag;
+}
+
+export type NymphPatchObject = NymphDataObject & NymphOperatorType & NymphObjectPropertyFlag;
 
 export type NymphObject = {
     $id: string;

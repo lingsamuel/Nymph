@@ -3,9 +3,8 @@ import {isObject, isPrimitive} from "../type";
 
 
 type Condition = {
-    "$equals": NymphPrimitiveType,
-} | {
-    "$includes": string,
+    "$equals"?: NymphPrimitiveType,
+    "$includes"?: string,
 }; /* | {
     "$script": string, // Valid variable: `target`, `self`
 }*/
@@ -62,8 +61,9 @@ class Matcher {
         }
 
         // Object Type
-        const conds = Object.keys(this.def).map(x => {
-            return new ConditionOperator(x, this.def[x]);
+        const def = this.def; // Make compiler happy
+        const conds = Object.keys(def).map(x => {
+            return new ConditionOperator(x, def[x]);
         });
         for (let cond of conds) {
             if (!cond.match(obj)) {
