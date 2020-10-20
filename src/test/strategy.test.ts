@@ -1,8 +1,8 @@
-import {Nymph, NymphPlugin} from "../merger";
+import {Nymph, NymphObject, NymphPlugin} from "../merger";
 import {describe, expect, test} from '@jest/globals'
 import {buildPlugins} from "./utils";
 
-const a = {
+const a: NymphObject = {
     "$id": "objA",
     "objProperty": {
         "prop": "objA#objProperty.prop Value",
@@ -14,7 +14,7 @@ const a = {
     "toBeDelete": "val",
 }
 
-const patch = [{
+const patch: NymphObject[] = [{
     "$id": "objA",
     "objProperty": {
         "$strategy": "merge",

@@ -9,6 +9,7 @@
 import {ListMutateDef} from "./operator/ListMutateOperator";
 import {ElementMatcherDef} from "./operator/ListMatcher";
 import {ListRemoveDef} from "./operator/ListRemoveOperator";
+import {NymphDataType, NymphPatchObject, NymphPrimitiveType} from "./merger";
 
 export type RecordID = string;
 export type PropertyName = string;
@@ -51,12 +52,15 @@ export type ListPropertyPatch = {
 } & Partial<ListRemoveDef | ListMutateDef | PatchListKeepElement>
     );
 
-export function isPrimitive(value): value is number | string | boolean {
+export function isArray(value: any): value is NymphPatchObject[] {
+    return Array.isArray(value);
+}
+
+export function isPrimitive(value: any): value is NymphPrimitiveType {
     return typeof value == "number" || typeof value == "string" || typeof value == "boolean";
 }
 
-
-export function isObject(value) {
+export function isObject(value: any): value is NymphPatchObject {
     // Basic check for Type object that's not null
     if (typeof value === "object" && value !== null) {
         // If Object.getPrototypeOf supported, use it

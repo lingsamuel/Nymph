@@ -1,8 +1,9 @@
 import {Operator} from "./Operator";
+import {NymphDataType} from "../merger";
+import {ListOpDef} from "./ListOperator";
 
-export type ListRemoveDef = {
-    "$value": any[],
-    "$list-remove": (string)[],
+export type ListRemoveDef = ListOpDef & {
+    "$list-remove"?: string | string[],
 }
 
 export class ListRemoveOperator extends Operator {
@@ -11,7 +12,7 @@ export class ListRemoveOperator extends Operator {
         return "$list-remove";
     }
 
-    apply(base: object[], patch: ListRemoveDef): object[] {
+    apply(base: NymphDataType[], patch: ListRemoveDef): NymphDataType[] {
         const op = patch[this.op()];
         if (op == undefined) {
             return base;

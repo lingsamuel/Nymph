@@ -1,8 +1,8 @@
-import {Nymph, NymphPlugin} from "../merger";
+import {Nymph, NymphDataType, NymphObject, NymphPlugin} from "../merger";
 import {describe, expect, test} from '@jest/globals'
 import {buildPlugins} from "./utils";
 
-const a = {
+const a : NymphObject = {
     "$id": "objA",
     "arrBeReplaced": [
         "a",
@@ -19,7 +19,7 @@ const a = {
     ],
 }
 
-const patch = [{
+const patch : NymphObject[] = [{
     "$id": "objA",
     "arrBeReplaced": {
         "$list-strategy": "replace",
@@ -44,13 +44,13 @@ test("list-merge", () => {
     console.log(nymph.processed)
     // list-strategy
     //  replace
-    expect(nymph.processed["objA"]["arrBeReplaced"].length).toBe(1);
+    expect((nymph.processed["objA"]["arrBeReplaced"] as NymphDataType[]).length).toBe(1);
     expect(nymph.processed["objA"]["arrBeReplaced"][0]).toBe("d");
     //  append
-    expect(nymph.processed["objA"]["arrBeAppended"].length).toBe(4);
+    expect((nymph.processed["objA"]["arrBeAppended"] as NymphDataType[]).length).toBe(4);
     expect(nymph.processed["objA"]["arrBeAppended"][3]).toBe("d");
     //  prepend
-    expect(nymph.processed["objA"]["arrBePrepended"].length).toBe(4);
+    expect((nymph.processed["objA"]["arrBePrepended"] as NymphDataType[]).length).toBe(4);
     expect(nymph.processed["objA"]["arrBePrepended"][0]).toBe("d");
 });
 

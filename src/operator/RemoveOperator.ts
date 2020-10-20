@@ -1,8 +1,8 @@
-import {logger} from "../merger";
+import {logger, NymphPatchObject} from "../merger";
 import {Operator} from "./Operator";
 
 export type RemoveDef = {
-    "$remove": string[] | string,
+    "$remove"?: string[] | string,
 }
 
 export class RemoveOperator extends Operator {
@@ -10,15 +10,15 @@ export class RemoveOperator extends Operator {
         return "$remove";
     }
 
-    opProp() {
-        return `${this.op()}-prop`;
+    opProp(): "$remove-prop" {
+        return "$remove-prop";
     }
 
     action(base: any, patch: RemoveDef, flaggedProps: string[], currentProp: string) {
         delete base[currentProp];
     }
 
-    apply(base: object, patch: RemoveDef): object {
+    apply(base: NymphPatchObject, patch: RemoveDef): NymphPatchObject {
         let properties = patch[this.op()];
         if (properties == undefined) {
             return base;
@@ -35,9 +35,9 @@ export class RemoveOperator extends Operator {
             if (base[this.opProp()] == undefined) {
                 base[this.opProp()] = [];
             }
-            base[this.opProp()].push(...properties);
+            base[this.opProp()]!.push(...properties);
         } else {
-            logger.log(`Unknown ${this.op()} ${properties}`)
+            logger.log(`Unknown ${this.op()} ${properties}`);
         }
         return base;
     }

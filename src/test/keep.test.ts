@@ -1,14 +1,14 @@
-import {Nymph, NymphPlugin} from "../merger";
+import {Nymph, NymphObject, NymphPlugin} from "../merger";
 import {describe, expect, test} from '@jest/globals'
 import {buildPlugins} from "./utils";
 
-const a = {
+const a : NymphObject = {
     "$id": "objA",
     "propToKeep": "keep",
     "propToKeep2": "keep2",
 }
 
-const patch = [{
+const patch : NymphObject[] = [{
     "$id": "objA",
     "$keep": [
         "propToKeep"
@@ -24,7 +24,7 @@ test("keep", () => {
     console.log(nymph.processed)
 
     // keep
-    expect(nymph.processed["objA"]["$keep-prop"].length).toBe(2);
-    expect(nymph.processed["objA"]["$keep-prop"][0]).toBe("propToKeep");
-    expect(nymph.processed["objA"]["$keep-prop"][1]).toBe("propToKeep2");
+    expect(nymph.processed["objA"]["$keep-prop"]!.length).toBe(2);
+    expect(nymph.processed["objA"]["$keep-prop"]![0]).toBe("propToKeep");
+    expect(nymph.processed["objA"]["$keep-prop"]![1]).toBe("propToKeep2");
 });

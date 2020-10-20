@@ -1,22 +1,21 @@
 import {Operator} from "./Operator";
-import {logger} from "../merger";
+import {logger, NymphDataType} from "../merger";
 import {ListMutateDef, ListMutateOperator} from "./ListMutateOperator";
 import {isObject} from "../type";
 import {ListRemoveDef, ListRemoveOperator} from "./ListRemoveOperator";
 import {ListRemoveMatchDef, ListRemoveMatchOperator} from "./ListRemoveMatchOperator";
+import {ListOpDef} from "./ListOperator";
 
-export type ListMergeDef = {
-    "$value": any[],
-    "$list-strategy": "replace" | "append" | "prepend",
-} | any[];
+export type ListMergeDef = ListOpDef & {
+    "$list-strategy"?: "replace" | "append" | "prepend",
+} | NymphDataType[];
 
 export class ListMergeOperator extends Operator {
-
     op(): "$list-strategy" {
         return "$list-strategy";
     }
 
-    apply(base: object[], patch: ListMergeDef & Partial<ListMutateDef & ListRemoveDef & ListRemoveMatchDef>): object[] {
+    apply(base: NymphDataType[], patch: ListMergeDef & ListMutateDef & ListRemoveDef & ListRemoveMatchDef): NymphDataType[] {
         if (Array.isArray(patch)) {
             // base value is array，patch value is array，applying default strategy `append`
             base.push(...patch);
@@ -29,7 +28,7 @@ export class ListMergeOperator extends Operator {
 
         let strategy = patch[this.op()];
         if (strategy == "replace") {
-            return patch["$value"];
+            return patch["$value"] ? patch["$value"] : [];
         }
 
         if (strategy == undefined) {

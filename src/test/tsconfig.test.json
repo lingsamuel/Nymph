@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "strictFunctionTypes": true,
+    "strictFunctionTypes": false,
     "module": "ESNext",
-    "strictNullChecks": true,
-    "noImplicitAny": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "outDir": "./dist",
@@ -16,10 +16,9 @@
     "esModuleInterop": true
   },
   "include": [
-    "./src/**/*"
+    "./**/*"
   ],
   "exclude": [
-    "node_modules",
-    "./src/test"
+    "node_modules"
   ]
 }

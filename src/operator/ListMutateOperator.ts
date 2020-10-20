@@ -1,24 +1,25 @@
 import {Operator} from "./Operator";
 import {ElementMatcher, ElementMatcherDef} from "./ListMatcher";
 import {MergeOperator} from "./MergeOperator";
-import {logger} from "../merger";
+import {logger, NymphDataType} from "../merger";
+import {isArray, isObject, isPrimitive} from "../type";
+import {ListMergeOperator} from "./ListMergeOperator";
+import {ListOpDef} from "./ListOperator";
 
-export type ListMutateDef = {
-    "$list-mutate": ListMutateElementDef[],
-    "$list-mutate-strategy": "fallback" | "remove",
-}
-
-type ListMutateElementDef = {
-    "$value": any[],
+type ListMutateElementDef = ListOpDef & ({
     "$strategy": "replace" | "merge",
     "$source": number,
     "$to": ElementMatcherDef, // `-` means last. `-N` means N before last. Reference must be single, not range
 } | {
-    "$value": any[],
     "$strategy": "insert",
     "$source": number,
     "$to": ElementMatcherDef,
     "$insert-type": "before" | "after",
+})
+
+export type ListMutateDef = ListOpDef & {
+    "$list-mutate"?: ListMutateElementDef[],
+    "$list-mutate-strategy"?: "fallback" | "remove",
 }
 
 export class ListMutateOperator extends Operator {
@@ -26,7 +27,7 @@ export class ListMutateOperator extends Operator {
         return "$list-mutate";
     }
 
-    apply(base: object[], patch: ListMutateDef): object[] {
+    apply(base: NymphDataType[], patch: ListMutateDef): NymphDataType[] {
         const mutateOps = patch[this.op()];
         if (mutateOps == undefined || !Array.isArray(mutateOps) || mutateOps.length == 0) {
             return base;
@@ -34,19 +35,29 @@ export class ListMutateOperator extends Operator {
 
         let processedIndexes: number[] = [];
 
+        if (patch["$value"] == undefined || !isArray(patch["$value"]) || patch["$value"].length == 0 ) {
+            return base;
+        }
+
         for (let mutateOp of mutateOps) {
             const matcher = new ElementMatcher(mutateOp["$to"]);
             const idx = matcher.match(base);
             if (idx == undefined || idx.length == 0) {
                 continue;
             }
-            const strategy = mutateOp["$strategy"];
             const patchObject = patch["$value"][mutateOp["$source"]];
-            if (strategy == "replace") {
+            if (mutateOp["$strategy"] == "replace") {
                 base[idx[0]] = patchObject;
-            } else if (strategy == "merge") {
-                base[idx[0]] = this.newOp(MergeOperator).apply(base[idx[0]], patchObject);
-            } else if (strategy == "insert") {
+            } else if (mutateOp["$strategy"] == "merge") {
+                const baseValue = base[idx[0]];
+                if (isObject(baseValue)) {
+                    base[idx[0]] = this.newOp(MergeOperator).apply(baseValue, patchObject);
+                } else if (isArray(baseValue)) {
+                    base[idx[0]] = this.newOp(ListMergeOperator).apply(baseValue, patchObject);
+                } else if (isPrimitive(baseValue)) {
+                    base[idx[0]] = patchObject;
+                }
+            } else if (mutateOp["$strategy"] == "insert") {
                 const insertType = mutateOp["$insert-type"];
                 if (insertType == "before") {
                     base.splice(idx[0], 0, patchObject);
@@ -57,7 +68,7 @@ export class ListMutateOperator extends Operator {
                     continue;
                 }
             } else {
-                logger.log(`Unknown strategy ${strategy}`)
+                logger.log(`Unknown strategy ${mutateOp["$strategy"]}`)
                 continue;
             }
             processedIndexes.push(mutateOp["$source"]);

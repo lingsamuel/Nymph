@@ -1,8 +1,8 @@
-import {Nymph, NymphPlugin} from "../merger";
+import {Nymph, NymphObject, NymphPlugin} from "../merger";
 import {describe, expect, test} from '@jest/globals'
 import {buildPlugins} from "./utils";
 
-const a = {
+const a : NymphObject = {
     "$id": "objA",
     "objToReplace": {
         "attr": "attr",
@@ -18,7 +18,7 @@ const a = {
     },
 };
 
-const patch = [{
+const patch : NymphObject[] = [{
     "$id": "objA",
     "objToReplace": {
         "$strategy": "replace",

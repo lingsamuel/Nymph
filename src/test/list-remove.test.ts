@@ -1,8 +1,8 @@
-import {Nymph, NymphPlugin} from "../merger";
+import {Nymph, NymphDataType, NymphObject, NymphPlugin} from "../merger";
 import {describe, expect, test} from '@jest/globals'
 import {buildPlugins} from "./utils";
 
-const a = {
+const a: NymphObject = {
     "$id": "objA",
     "arrToRemoveElement": [
         "1", "2", "3", "4", "5"
@@ -16,7 +16,7 @@ const a = {
     ],
 }
 
-const patch = [{
+const patch: NymphObject[] = [{
     "$id": "objA",
     "arrToRemoveElement": {
         "$list-remove": [
@@ -49,10 +49,10 @@ test("list-remove", () => {
     const nymph = new Nymph(...buildPlugins(a, patch));
     console.log(nymph.processed)
     // list-remove
-    expect(nymph.processed["objA"]["arrToRemoveElement"].length).toBe(1);
+    expect((nymph.processed["objA"]["arrToRemoveElement"] as NymphDataType[]).length).toBe(1);
     expect(nymph.processed["objA"]["arrToRemoveElement"][0]).toBe("3");
 
-    expect(nymph.processed["objA"]["arrToRemoveObjElement"].length).toBe(1);
+    expect((nymph.processed["objA"]["arrToRemoveObjElement"] as NymphDataType[]).length).toBe(1);
     expect(nymph.processed["objA"]["arrToRemoveObjElement"][0]["name"]).toBe("ele1");
 });
 

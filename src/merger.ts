@@ -1,5 +1,12 @@
 import {isObject} from "./type";
 import {ObjectOperator} from "./operator/ObjectOperator";
+import {ObjectKeepDef} from "./operator/KeepOperator";
+import {RemoveDef} from "./operator/RemoveOperator";
+import {ListMutateDef} from "./operator/ListMutateOperator";
+import {ListRemoveDef} from "./operator/ListRemoveOperator";
+import {ListRemoveMatchDef} from "./operator/ListRemoveMatchOperator";
+import {ListMergeDef} from "./operator/ListMergeOperator";
+import {ImportDef, MergeDef, PropertyKeepDef} from "./operator/MergeOperator";
 
 class Logger {
     log(...args: any[]) {
@@ -9,9 +16,31 @@ class Logger {
 
 export const logger = new Logger();
 
-export class NymphObject {
-    $id: string;
+export type NymphPrimitiveType = number | string | boolean;
+
+export type NymphDirectDataType = NymphPrimitiveType | NymphDataType[] | NymphPatchObject;
+
+export type NymphWrappedDataType = {
+    "$value": NymphDirectDataType,
+} & RemoveDef & PropertyKeepDef & ImportDef;
+
+export type NymphDataType = NymphDirectDataType | NymphWrappedDataType;
+
+export type NymphOperatorType = MergeDef & ImportDef & RemoveDef & ObjectKeepDef &
+    ListMergeDef & ListMutateDef & ListRemoveDef & ListRemoveMatchDef;
+
+export type NymphObjectPropertyFlag = {
+    "$remove-prop"?: string[],
+    "$keep-prop"?: string[],
 }
+
+export type NymphPatchObject = {
+    [key: string]: NymphDataType;
+} & NymphOperatorType & NymphObjectPropertyFlag;
+
+export type NymphObject = {
+    $id: string;
+} & NymphPatchObject;
 
 export class NymphPlugin {
     name: string;
@@ -31,13 +60,13 @@ export class Nymph {
     plugins: NymphPlugin[] = [];
     database: {
         [id: string]: {
-            base: object,
-            patches: object[],
+            base: NymphPatchObject,
+            patches: NymphPatchObject[],
         };
     } = {};
 
     processed: {
-        [id: string]: object
+        [id: string]: NymphPatchObject,
     } = {};
 
     constructor(...plugins: NymphPlugin[]) {
@@ -89,7 +118,7 @@ export class Nymph {
         }
     }
 
-    applyPlugin(base: object, patches: object[]): object {
+    applyPlugin(base: NymphPatchObject, patches: NymphPatchObject[]): NymphPatchObject {
         const op = new ObjectOperator();
         op.merger = this;
 
@@ -105,13 +134,13 @@ export class Nymph {
     parseIndexer(ref: string | string[]): number[] {
         let indexer = "";
         if (Array.isArray(ref)) {
-            let indexes = []
+            let indexes: string[] = []
             for (let r of ref) {
                 if (r.includes("/")) { // /0,1,2
                     indexes.push(r.split("/")[1].trim())
                 } else if (r.includes(",")) { // 0,1,2
                     indexes.push(r.trim())
-                } else if (!isNaN(+r)) {
+                } else if (!isNaN(+r)) { // 0
                     indexes.push(r)
                 }
             }
@@ -126,15 +155,18 @@ export class Nymph {
 
         if (indexer != "") {
             const indexAccessors = indexer.split(",")
-            let includeIndexes = []
-            let excludeIndexes = []
+            let includeIndexes: number[] = []
+            let excludeIndexes: number[] = []
             for (let indexAccessor of indexAccessors) {
+                if (indexAccessor == "") {
+                    continue;
+                }
                 let exclusion = false;
                 if (indexAccessor.startsWith("!")) {
                     exclusion = true
                     indexAccessor = indexAccessor.substring(1)
                 }
-                const indexes = []
+                const indexes: number[] = []
                 if (indexAccessor.includes("-")) {
                     // range
                     const start = parseInt(indexAccessor.split("-")[0])
@@ -146,9 +178,9 @@ export class Nymph {
                     indexes.push(parseInt(indexAccessor))
                 }
                 if (exclusion) {
-                    excludeIndexes.push(...indexes)
+                    excludeIndexes.push(...indexes);
                 } else {
-                    includeIndexes.push(...indexes)
+                    includeIndexes.push(...indexes);
                 }
             }
 
@@ -160,27 +192,27 @@ export class Nymph {
         return []
     }
 
-    parseReference(ref: string): any {
+    parseReference(ref: string): NymphDataType {
         const id = ref.split("#")[0]
         const accessor = ref.split("#")[1]
         const path = accessor.split(".")
         path[path.length - 1] = path[path.length - 1].split("/")[0]
 
-        let obj: object | any[] = this.database[id];
+        let obj: NymphDataType = this.database[id].base;
         for (let key of path) {
-            if (obj[key] == undefined) {
+            if (!isObject(obj) || obj[key] == undefined) {
                 return {}
             }
-            obj = obj[key]
+            obj = obj[key];
         }
         if (isObject(obj)) {
             return obj
         } else if (Array.isArray(obj)) {
             let includeIndexes = this.parseIndexer(ref)
-            let result = []
+            let result: NymphDataType[] = []
             for (let i of includeIndexes) {
                 if (obj.length > i) {
-                    result.push(obj[i])
+                    result.push(obj[i]);
                 }
             }
             return result

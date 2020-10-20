@@ -1,20 +1,23 @@
-import {logger} from "../merger";
+import {logger, NymphDataType, NymphPatchObject, NymphWrappedDataType} from "../merger";
 import {Operator} from "./Operator";
 import {ListMergeOperator} from "./ListMergeOperator";
-import {isObject, isPrimitive} from "../type";
+import {isArray, isObject, isPrimitive} from "../type";
 import {ObjectOperator} from "./ObjectOperator";
-import {RemoveDef} from "./RemoveOperator";
-import {KeepDef} from "./KeepOperator";
 
 
 export type MergeStrategyType = "merge" | "replace" | "replace-exist" | "add-new";
 
 export type MergeDef = {
-    "$strategy": MergeStrategyType,
+    "$strategy"?: MergeStrategyType,
 }
 
 export type ImportDef = {
-    "$import": string,
+    "$import"?: string,
+}
+
+export type PropertyKeepDef = {
+    "$keep"?: "ref" | "exist",
+    "$keep-ref"?: string,
 }
 
 export class MergeOperator extends Operator {
@@ -22,7 +25,7 @@ export class MergeOperator extends Operator {
         return "$strategy";
     }
 
-    apply(base: object, patch: (MergeDef & Partial<ImportDef | RemoveDef | KeepDef>)): object {
+    apply(base: NymphPatchObject, patch: NymphPatchObject): NymphPatchObject {
         let strategy = patch[this.op()];
         if (strategy == undefined) {
             strategy = "merge";
@@ -32,15 +35,15 @@ export class MergeOperator extends Operator {
                 if (key.startsWith("$")) {
                     continue;
                 }
-                let baseProp = base[key];
-                let patchProp = patch[key];
+                let baseProp: NymphDataType = base[key];
+                let patchProp: NymphDataType = patch[key];
                 if (baseProp == undefined) {
                     // base value doesn't exist, add to it
                     base[key] = patchProp;
                 } else if (isObject(baseProp) && isObject(patchProp)) {
                     // base value and patch value both are object，applying merge
                     base[key] = this.newOp(ObjectOperator).apply(baseProp, patchProp);
-                } else if (Array.isArray(baseProp)) {
+                } else if (isArray(baseProp) && (isArray(patchProp) || isObject(patchProp))) {
                     // base value is array，patch value is object, applying list-merge
                     base[key] = this.newOp(ListMergeOperator).apply(baseProp, patchProp)
                 } else if (isPrimitive(baseProp) && isObject(patchProp)) {
@@ -58,29 +61,31 @@ export class MergeOperator extends Operator {
                         continue;
                     }
                     // base prop turns to be a obj
-                    base[key] = {
-                        "$value": base[key],
+                    const wrapped: NymphWrappedDataType = {
+                        "$value": baseProp,
                     }
                     if (patchProp["$value"] != undefined) {
-                        base[key]["$value"] = patchProp["$value"];
+                        wrapped["$value"] = patchProp["$value"];
                     }
-                    if (patchProp["$keep"] != undefined) {
-                        base[key]["$keep"] = patchProp["$keep"];
-                        if (typeof base[key]["$keep"] == "string") {
-                            base[key]["$keep"] = [base[key]["$keep"]];
-                        }
-                    } else if (patchProp["$keep-ref"] != undefined) {
+                    if (patchProp["$keep"] == "exist") {
+                        wrapped["$keep"] = patchProp["$keep"];
+                        // if (typeof wrapped["$keep"] == "string") {
+                        //     wrapped["$keep"] = "exist";
+                        // }
+                    } else if (/*patchProp["$keep"] == "ref" && */patchProp["$keep-ref"] != undefined) {
                         if (typeof patchProp["$keep-ref"] != "string") {
                             logger.log(`Operator keep-ref ${patchProp["$keep-ref"]} should be string`);
                             return base;
                         }
-                        base[key]["$keep-ref"] = patchProp["$keep-ref"];
+                        wrapped["$keep"] = "ref";
+                        wrapped["$keep-ref"] = patchProp["$keep-ref"];
                     }
-                    if (patchProp["$remove"] != undefined) {
-                        base[key] = {
-                            "$remove": patchProp["$remove"],
-                        }
+                    const removeOp = patchProp["$remove"];
+                    if (removeOp != undefined) {
+                        wrapped["$remove"] = patchProp["$remove"];
                     }
+
+                    base[key] = wrapped;
                 } else if (isPrimitive(baseProp) && isPrimitive(patchProp)) {
                     // both are primitive, replace
                     base[key] = patchProp;

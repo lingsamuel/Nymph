@@ -1,8 +1,8 @@
-import {Nymph, NymphPlugin} from "../merger";
+import {Nymph, NymphDataType, NymphObject, NymphPlugin} from "../merger";
 import {describe, expect, test} from '@jest/globals'
 import {buildPlugins} from "./utils";
 
-const a = {
+const a : NymphObject = {
     "$id": "objA",
     "arrToMutate": [
         {
@@ -20,7 +20,7 @@ const a = {
     ],
 }
 
-const patch = [{
+const patch : NymphObject[] = [{
     "$id": "objA",
     "arrToMutate": {
         "$value": [
@@ -94,7 +94,7 @@ test("list-mutate", () => {
     const nymph = new Nymph(...buildPlugins(a, patch));
     console.log(JSON.stringify(nymph.processed))
     // list-mutate
-    expect(nymph.processed["objA"]["arrToMutate"].length).toBe(7);
+    expect((nymph.processed["objA"]["arrToMutate"] as NymphDataType[]).length).toBe(7);
     //  insert before `first` equals ele0
     expect(nymph.processed["objA"]["arrToMutate"][0]["name"]).toBe(undefined);
     expect(nymph.processed["objA"]["arrToMutate"][0]["attr"]).toBe("attr0");

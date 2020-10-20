@@ -1,9 +1,9 @@
-import {logger} from "../merger";
+import {logger, NymphDataType, NymphPatchObject, NymphPrimitiveType} from "../merger";
+import {isObject, isPrimitive} from "../type";
 
-export type PrimitiveTypes = string | number;
 
-export type Condition = {
-    "$equals": PrimitiveTypes,
+type Condition = {
+    "$equals": NymphPrimitiveType,
 } | {
     "$includes": string,
 }; /* | {
@@ -19,7 +19,7 @@ class ConditionOperator {
         this.def = def;
     }
 
-    match(obj: any): boolean {
+    match(obj: NymphPatchObject): boolean {
         const toMatch = obj[this.key];
         if (this.def["$equals"] != undefined && toMatch === this.def["$equals"]) {
             return true;
@@ -32,7 +32,7 @@ class ConditionOperator {
 
 export type MatcherDef = {
     [key: string]: Condition,
-} | PrimitiveTypes;
+} | NymphPrimitiveType;
 
 class Matcher {
     def: MatcherDef;
@@ -41,20 +41,27 @@ class Matcher {
         this.def = def;
     }
 
-    match(obj: any): boolean {
+    match(obj: NymphDataType): boolean {
         let matched = true;
 
         // Primitive Types
-        const objType = typeof obj;
-        const primitiveTypes = ["string", "number"];
-        if (primitiveTypes.includes(objType)) {
-            if (typeof this.def != objType) {
-                logger.log(`Cannot match ${obj} by ${this.def}`);
+        if (isPrimitive(this.def)) {
+            if (isPrimitive(obj)) {
+                if (typeof this.def != typeof obj) {
+                    logger.log(`Type mismatch: ${obj} vs ${this.def}`);
+                }
+                return obj == this.def;
+            } else {
+                logger.log(`Type mismatch: ${obj} vs ${this.def}`);
+                return false;
             }
-            return obj == this.def;
         }
 
-        // Object
+        if (!isObject(obj)) {
+            return false;
+        }
+
+        // Object Type
         const conds = Object.keys(this.def).map(x => {
             return new ConditionOperator(x, this.def[x]);
         });
@@ -84,7 +91,7 @@ export class ElementMatcher {
         this.matcher = new Matcher(def["$matcher"]);
     }
 
-    match(list: any[]): number[] {
+    match(list: NymphDataType[]): number[] {
         let matchedIndex: number[] = [];
         list.forEach((x, i) => {
             if (this.matcher.match(x)) {
@@ -109,7 +116,7 @@ export class ListElementMatcher {
         this.matchers = defs.map(def => new ElementMatcher(def));
     }
 
-    match(list: any[]): number[] {
+    match(list: NymphDataType[]): number[] {
         const result: number[] = [];
         this.matchers.map(op => op.match(list)).forEach(idx => result.push(...idx));
         return result;

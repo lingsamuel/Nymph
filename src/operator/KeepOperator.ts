@@ -1,8 +1,8 @@
-import {logger} from "../merger";
+import {logger, NymphPatchObject} from "../merger";
 import {Operator} from "./Operator";
 
-export type KeepDef = {
-    "$keep": string[] | string,
+export type ObjectKeepDef = {
+    "$keep"?: string[] | string,
 }
 
 export class KeepOperator extends Operator {
@@ -10,12 +10,12 @@ export class KeepOperator extends Operator {
         return "$keep";
     }
 
-    opProp() {
-        return `${this.op()}-prop`;
+    opProp(): "$keep-prop" {
+        return "$keep-prop";
     }
 
-    apply(base: object, patch: KeepDef): object {
-        let properties = patch[this.op()];
+    apply(base:NymphPatchObject, patch: ObjectKeepDef): NymphPatchObject {
+        let properties = patch["$keep"];
         if (properties == undefined) {
             return base;
         }
@@ -27,7 +27,7 @@ export class KeepOperator extends Operator {
             if (base[this.opProp()] == undefined) {
                 base[this.opProp()] = [];
             }
-            base[this.opProp()].push(...properties);
+            base[this.opProp()]!.push(...properties);
         } else {
             logger.log(`Unknown ${this.op()} ${properties}`)
         }
