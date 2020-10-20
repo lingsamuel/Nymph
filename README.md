@@ -212,7 +212,7 @@ Available values:
 - replace-exist: adds nothing, only replaces all existed properties to object.
 - add-new: replaces nothing, only adds all new properties to object.
 
-`$strategy` doesn't control list. List strategy is special, see `$strategy-list`.
+`$strategy` doesn't control list. List strategy is special, see `$list-strategy`.
 
 ### `$remove`
 
@@ -222,13 +222,13 @@ Type: `List<String>`.
 
 ## List Operator
 
-### `$strategy-list`
+### `$list-strategy`
 
 Only works for `List` property.
 
 Type: `Enum`.
 
-`$strategy-list` points how list merge works.
+`$list-strategy` points how list merge works.
 
 Available values:
 - append (default): doesn't change existed elements
@@ -237,7 +237,7 @@ Available values:
 
 If a `$list-mutate` operator is set, this property is fallback strategy. 
 
-Specially, if `$strategy-list` is `replace`, it will replace existed list to self regardless, ignores any other operators.
+Specially, if `$list-strategy` is `replace`, it will replace existed list to self regardless, ignores any other operators.
 
 ### `$list-remove`
 
@@ -286,7 +286,7 @@ const c = {
 
 Type: `List<ListMutatePatch>`.
 
-Controls elements insert or replace explicitly. Not listed elements follows the `$strategy-list` operator.
+Controls elements insert or replace explicitly. Not listed elements follows the `$list-strategy` operator.
 
 ## Flag Operator
 
@@ -324,6 +324,6 @@ This flag indicates the final value of this property should be same as the given
 
 This adds `$keep` flag to the matched elements.
 
-Note that `$keep` flag won't reject `$list-mutate` or `$strategy-list=replace` operator, only raise warnings if violated.
+Note that `$keep` flag won't reject `$list-mutate` or `$list-strategy=replace` operator, only raise warnings if violated.
 
 ### `$list-keep-ref` (WIP)

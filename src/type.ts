@@ -49,9 +49,9 @@ export type ListElementMatcherDef = ElementMatcherDef | number | "-" | EntryRefe
 export type ListMatcherStrategy = "first" | "last" | "all";
 
 export type ListPropertyPatch = {
-    "$strategy-list": "replace",
+    "$list-strategy": "replace",
 } | ({
-    "$strategy-list": "append" | "prepend",
+    "$list-strategy": "append" | "prepend",
 } & Partial<ListRemoveDef | ListMutateDef | PatchListKeepElement>
     );
 

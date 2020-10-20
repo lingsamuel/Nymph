@@ -22,7 +22,7 @@ const a = {
 const patch = [{
     "$id": "objA",
     "arrBeReplaced": {
-        "$strategy-list": "replace",
+        "$list-strategy": "replace",
         "$value": [
             "d",
         ],
@@ -31,7 +31,7 @@ const patch = [{
         "d",
     ],
     "arrBePrepended": {
-        "$strategy-list": "prepend",
+        "$list-strategy": "prepend",
         "$value": [
             "d",
         ],
@@ -42,7 +42,7 @@ const patch = [{
 test("list-merge", () => {
     const nymph = new Nymph(...buildPlugins(a, patch));
     console.log(nymph.processed)
-    // Strategy-list
+    // list-strategy
     //  replace
     expect(nymph.processed["objA"]["arrBeReplaced"].length).toBe(1);
     expect(nymph.processed["objA"]["arrBeReplaced"][0]).toBe("d");

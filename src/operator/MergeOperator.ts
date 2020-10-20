@@ -37,8 +37,8 @@ export class MergeOperator extends Operator {
                             // 原值是 array，新值是 array，应用默认策略 append
                             base[key].push(...patchProp)
                         } else if (isObject(patchProp)) {
-                            // 原值是 array，新值是 object，处理 strategy-list operator
-                            // 处理 $strategy-list 等
+                            // 原值是 array，新值是 object，处理 list-strategy operator
+                            // 处理 $list-strategy 等
                             base[key] = this.newOp(ListMergeOperator).apply(baseProp, patchProp)
                         } else {
                             // 其他情形均不合法

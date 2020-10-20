@@ -93,7 +93,7 @@ const patch = [{
 test("list-mutate", () => {
     const nymph = new Nymph(...buildPlugins(a, patch));
     console.log(nymph.processed)
-    // Strategy-list-mutate
+    // list-mutate
     expect(nymph.processed["objA"]["arrToMutate"].length).toBe(7);
     //  insert before `first` equals ele0
     expect(nymph.processed["objA"]["arrToMutate"][0]["name"]).toBe(undefined);

@@ -48,7 +48,7 @@ const patch = [{
 test("list-remove", () => {
     const nymph = new Nymph(...buildPlugins(a, patch));
     console.log(nymph.processed)
-    // Strategy-list-remove
+    // list-remove
     expect(nymph.processed["objA"]["arrToRemoveElement"].length).toBe(1);
     expect(nymph.processed["objA"]["arrToRemoveElement"][0]).toBe("3");
 

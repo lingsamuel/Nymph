@@ -186,7 +186,7 @@ const patch = {
     },
     "simpleProperty": "simpleProperty Value Patched",
     "arrProperty": {
-        "$strategy-list": "append",
+        "$list-strategy": "append",
         "$value": [
             {
                 "$import": "ObjectB.arrProperty/0",

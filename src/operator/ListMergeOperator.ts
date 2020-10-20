@@ -5,11 +5,11 @@ import {ListRemoveMatcherOperator, ListRemoveMatcherDef} from "./ListRemoveMatch
 import {ListMutateOperator} from "./ListMutateOperator";
 
 type ListMergeReplaceDef = {
-    "$strategy-list": "replace",
+    "$list-strategy": "replace",
 };
 
 type ListMergeMergeDef = {
-    "$strategy-list": "append" | "prepend",
+    "$list-strategy": "append" | "prepend",
 } & Partial<ListRemoveDef> & Partial<ListRemoveMatcherDef>;
 
 export type ListMergeDef = ListMergeReplaceDef | ListMergeMergeDef;
@@ -17,7 +17,7 @@ export type ListMergeDef = ListMergeReplaceDef | ListMergeMergeDef;
 export class ListMergeOperator extends Operator {
 
     op(): string {
-        return "$strategy-list";
+        return "$list-strategy";
     }
 
     apply(base: object[], patch: {
@@ -47,7 +47,7 @@ export class ListMergeOperator extends Operator {
         } else if (strategy == "prepend") {
             return newList.concat(base)
         } else {
-            logger.log(`Unknown strategy-list ${strategy}`);
+            logger.log(`Unknown list-strategy ${strategy}`);
         }
         return base;
     }
