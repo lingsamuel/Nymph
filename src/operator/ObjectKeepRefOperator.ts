@@ -24,9 +24,11 @@ export class ObjectKeepRefOperator extends Operator {
         }
 
         if (base[this.opProp()] == undefined) {
-            base[this.opProp()] = [];
+            base[this.opProp()] = {};
         }
-        base[this.opProp()] = properties;
+        for (let key of Object.keys(properties)) {
+            base[this.opProp()]![key] = properties[key];
+        }
         return base;
     }
 }

@@ -20,9 +20,9 @@ const a : NymphObject = {
     ],
 }
 
-const patch : NymphObject[] = [{
+const patch : any[] = [{
     "$id": "objA",
-    "arrToMutate": {
+    "arrToMutate": { // Compiler treats this field as type `NymphDataType` and raises error
         "$value": [
             {
                 "attr": "attr0",

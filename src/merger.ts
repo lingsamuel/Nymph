@@ -7,6 +7,7 @@ import {ListRemoveMatchDef} from "./operator/ListRemoveMatchOperator";
 import {ListMergeDef} from "./operator/ListMergeOperator";
 import {ImportDef, ObjectMergeDef} from "./operator/ObjectMergeOperator";
 import {ObjectRemoveDef} from "./operator/ObjectRemoveOperator";
+import {ObjectKeepRefDef} from "./operator/ObjectKeepRefOperator";
 
 class Logger {
     log(...args: any[]) {
@@ -20,12 +21,15 @@ export type NymphPrimitiveType = number | string | boolean;
 
 export type NymphDataType = NymphPrimitiveType | NymphDataType[] | NymphPatchObject;
 
-export type NymphOperatorType = ObjectMergeDef & ImportDef & ObjectRemoveDef & ObjectKeepDef &
+export type NymphOperatorType = ObjectMergeDef & ImportDef & ObjectRemoveDef & ObjectKeepDef & ObjectKeepRefDef &
     ListMergeDef & ListMutateDef & ListRemoveDef & ListRemoveMatchDef;
 
 export type NymphObjectPropertyFlag = {
     "$remove-prop"?: string[],
     "$keep-prop"?: string[],
+    "$keep-ref-prop"?: {
+        [key: string]: string,
+    },
 }
 
 export type NymphDataObject = {

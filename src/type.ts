@@ -11,47 +11,6 @@ import {ElementMatcherDef} from "./operator/ListMatcher";
 import {ListRemoveDef} from "./operator/ListRemoveOperator";
 import {NymphDataType, NymphPatchObject, NymphPrimitiveType} from "./merger";
 
-export type RecordID = string;
-export type PropertyName = string;
-export type EntryReference = string;
-
-export type PatchStrategy = {
-    "$strategy": PatchStrategyType,
-}
-
-export type PatchStrategyType = "merge" | "replace" | "replace-exist" | "add-newly";
-
-export type PatchImport = {
-    "$import": EntryReference,
-}
-
-export type PatchRemove = {
-    "$remove": PropertyName[],
-}
-
-export type PatchKeep = {
-    "$keep": "exist"
-} | {
-    "$keep": "ref",
-    "$keep-ref": EntryReference,
-}
-
-export type PatchNonList = PatchStrategy & Partial<PatchImport | PatchRemove | PatchKeep>;
-
-
-export type PatchListKeepElement = {
-    "$list-keep": {
-        "$to": EntryReference,
-    }
-} & PatchKeep;
-
-export type ListPropertyPatch = {
-    "$list-strategy": "replace",
-} | ({
-    "$list-strategy": "append" | "prepend",
-} & Partial<ListRemoveDef | ListMutateDef | PatchListKeepElement>
-    );
-
 export function isArray(value: any): value is NymphPatchObject[] {
     return Array.isArray(value);
 }
