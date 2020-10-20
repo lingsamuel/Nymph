@@ -2,7 +2,7 @@
 
 *Nymph* is a patch engine for (serialized) typed object **database** in JSON format.
 
-This engine is originally developed for an extendable mod system. Each `json` file considered as a *plugin*. If a plugin wants to edit some entries, it should know everything about the original plugin which defines those entries. A plugin shouldn't contain anything it doesn't need.
+This engine is originally developed for an extendable mod system.
 
 Nymph is highly inspired by the mod system of `The Elder Scrolls`('s disadvantages) and other games. Aims to keep the plugin flexibility and maximum compatibility between plugins.
 
@@ -10,15 +10,27 @@ Although a plugin always contains many entries, the documentation assumes each j
 
 ## Basic Design
 
-A patched property must contain an `operator`.
+### Plugin
 
-A object must have a plugin-wide unique field to identity objects. In this document, it's `$id`.
+A plugin contains many objects. All these objects construct the object database.
+
+An object must have a `plugin group`-wide unique field to identity objects. In this document, it's `$id`.
+
+If an object's id already presented in the database, it will be a patch. 
+
+A patch object must contain an `operator`. By default, it's `merge` and `append`.
+
+If a plugin wants to edit some objects, it should know everything about the original plugins which define those objects.
+
+A plugin shouldn't contain anything it doesn't need.
 
 ### Master File
 
-A plugin needs add `Master` to their definition to make reference works properly.
+A plugin needs add `Master` (dependency) to their definition to make reference works properly.
 
-Example in this documentation won't show this while the example only contains object.
+Example in this documentation doesn't contain this part.
+
+A plugin and master plugins it depends on call `plugin group`.
 
 ### Reference String
 
@@ -26,9 +38,9 @@ Single Reference:
 
 - `obj-id#path.to.the.key`: select key path "path.to.the.key" from `obj-id` object
 
-- `obj-id#path.to.arr/0`: select from array key path "path.to.arr", index 0
-
 List Reference (Only for arrays):
+
+- `obj-id#path.to.arr/0`: select from array key path "path.to.arr", index 0
 
 - `obj-id#path.to.the.key/0-10`: select from index 0 to 10
 
@@ -48,7 +60,7 @@ Won't support reverse index:
 
 ## Non-List Operator
 
-### `$import`
+### `$import` (WIP)
 
 Type: `Reference`.
 
@@ -115,7 +127,6 @@ const result = {
 ```
 </details>
 
-
 The `$import` can also combined with `$strategy`.
 
 If `$import-pick` occurs, only given path properties will be selected.
@@ -124,8 +135,10 @@ If `$import-no-pick` occurs, given path properties won't be selected. `$import-p
 
 If properties definition also occurs in same level, they have higher priority.
 
-```javascript
+<details>
+<summary>Example</summary>
 
+```javascript
 const t1 = {
     "obj": {
         "key": "val",
@@ -173,14 +186,15 @@ const result = {
     }
 }
 ```
+</details>
 
-#### `$import-pick`
+#### `$import-pick` (WIP)
 
 Type: `List<RelativeReference>`
 
 Defines which property `$import` should pick.
 
-#### `$import-no-pick`
+#### `$import-no-pick` (WIP)
 
 Type: `List<RelativeReference>`
 
@@ -221,7 +235,7 @@ Available values:
 - prepend: use this if order matters
 - replace: clear all existed elements in all plugins, has the highest priority.
 
-If a `$strategy-list-hybrid` operator is set, this property is fallback strategy. 
+If a `$list-mutate` operator is set, this property is fallback strategy. 
 
 Specially, if `$strategy-list` is `replace`, it will replace existed list to self regardless, ignores any other operators.
 
@@ -297,7 +311,7 @@ Note that `$keep` flag won't reject `$remove` or `$strategy=replace` operator, o
 
 Available values:
 - exist (default): This flag warning if any plugin wants to remove this property.
-- none: This flag raise warning if any plugin wants to add this property.
+- none: Use `remove`.
 - ref: Meaningless. See [`$keep-ref`](#keep-ref). If `ref` is set, a `$keep-ref` operator must be set, too.
 
 #### `$keep-ref`
@@ -306,10 +320,10 @@ Type: `Reference`.
 
 This flag indicates the final value of this property should be same as the given reference.
 
-### `$list-keep`
+### `$list-keep` (WIP)
 
 This adds `$keep` flag to the matched elements.
 
 Note that `$keep` flag won't reject `$list-mutate` or `$strategy-list=replace` operator, only raise warnings if violated.
 
-### `$list-keep-ref`
+### `$list-keep-ref` (WIP)
