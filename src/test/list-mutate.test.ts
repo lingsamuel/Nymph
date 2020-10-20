@@ -34,7 +34,7 @@ const patch = [{
                 "attr": "attr2",
             },
             {
-                "attr": "last",
+                "attr": "last", // No presents in list-mutate, fallback
             },
         ],
         "$list-mutate": [
@@ -92,7 +92,7 @@ const patch = [{
 
 test("list-mutate", () => {
     const nymph = new Nymph(...buildPlugins(a, patch));
-    console.log(nymph.processed)
+    console.log(JSON.stringify(nymph.processed))
     // list-mutate
     expect(nymph.processed["objA"]["arrToMutate"].length).toBe(7);
     //  insert before `first` equals ele0
@@ -104,11 +104,11 @@ test("list-mutate", () => {
     //  replace ele1
     expect(nymph.processed["objA"]["arrToMutate"][2]["name"]).toBe(undefined);
     expect(nymph.processed["objA"]["arrToMutate"][2]["attr"]).toBe("attr1");
-    //  merger ele2
-    expect(nymph.processed["objA"]["arrToMutate"][3]["name"]).toBe("ele2");
-    expect(nymph.processed["objA"]["arrToMutate"][3]["attr"]).toBe("attr2");
     //  last fallback
     expect(nymph.processed["objA"]["arrToMutate"][6]["name"]).toBe(undefined);
     expect(nymph.processed["objA"]["arrToMutate"][6]["attr"]).toBe("last");
+    //  merger ele2
+    expect(nymph.processed["objA"]["arrToMutate"][3]["name"]).toBe("ele2");
+    expect(nymph.processed["objA"]["arrToMutate"][3]["attr"]).toBe("attr2");
 });
 

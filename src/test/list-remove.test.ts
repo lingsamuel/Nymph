@@ -23,7 +23,7 @@ const patch = [{
             "0",
             "/1-3,!2", // 0, 1, 3
         ],
-        "$list-remove-matcher": [
+        "$list-remove-match": [
             {
                 "$find-strategy": "first",
                 "$matcher": "5",
@@ -31,7 +31,7 @@ const patch = [{
         ]
     },
     "arrToRemoveObjElement": {
-        "$list-remove-matcher": [
+        "$list-remove-match": [
             {
                 "$find-strategy": "first",
                 "$matcher": {

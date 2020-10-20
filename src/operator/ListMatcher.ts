@@ -1,4 +1,3 @@
-import {ListMatcherStrategy} from "../type";
 import {logger} from "../merger";
 
 export type PrimitiveTypes = string | number;
@@ -69,14 +68,15 @@ class Matcher {
     }
 }
 
+export type ElementMatcherStrategy = "first" | "last" | "all";
 
 export type ElementMatcherDef = {
     "$matcher": MatcherDef,
-    "$find-strategy": ListMatcherStrategy,
+    "$find-strategy": ElementMatcherStrategy,
 };
 
 export class ElementMatcher {
-    findStrategy: ListMatcherStrategy;
+    findStrategy: ElementMatcherStrategy;
     matcher: Matcher;
 
     constructor(def: ElementMatcherDef) {

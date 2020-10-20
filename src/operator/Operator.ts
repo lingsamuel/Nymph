@@ -10,7 +10,7 @@ export abstract class Operator {
         patches: any,
     ): any
 
-    newOp(ctor: new() => Operator) {
+    newOp<T extends Operator>(ctor: new() => T): T {
         const op = new ctor();
         op.merger = this.merger;
         return op;

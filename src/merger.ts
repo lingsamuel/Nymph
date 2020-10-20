@@ -1,8 +1,5 @@
 import {isObject} from "./type";
-import {Operator} from "./operator/Operator";
-import {MergeOperator} from "./operator/MergeOperator";
-import {AttributesRemoveOperator} from "./operator/AttributesRemoveOperator";
-import {AttributesKeepOperator} from "./operator/AttributesKeepOperator";
+import {ObjectOperator} from "./operator/ObjectOperator";
 
 class Logger {
     log(...args: any[]) {
@@ -24,13 +21,13 @@ export class NymphPlugin {
     constructor(...objs: NymphObject[]) {
         this.objects = objs;
     }
+
     addObj(...objs: NymphObject[]) {
         this.objects.push(...objs);
     }
 }
 
 export class Nymph {
-    operators: Operator[] = [];
     plugins: NymphPlugin[] = [];
     database: {
         [id: string]: {
@@ -43,20 +40,12 @@ export class Nymph {
         [id: string]: object
     } = {};
 
-    private addOp(op: Operator) {
-        op.merger = this;
-        this.operators.push(op);
-    }
-
     constructor(...plugins: NymphPlugin[]) {
-        this.addOp(new MergeOperator());
-        this.addOp(new AttributesRemoveOperator());
-        this.addOp(new AttributesKeepOperator());
         this.plugins = plugins;
         this.constructDatabase();
     }
 
-    addPlugin(...plugins: NymphPlugin[]){
+    addPlugin(...plugins: NymphPlugin[]) {
         this.plugins.push(...plugins);
     }
 
@@ -78,20 +67,19 @@ export class Nymph {
         // Apply patches to base
 
         for (let id in this.database) {
-            let obj = this.database[id];
-            this.mergeRecord(obj);
+            this.database[id].base = this.applyPlugin(this.database[id].base, this.database[id].patches);
         }
 
         // Apply operators between base
-        for (let id in this.database) {
-            let obj = this.database[id];
-            let base = obj.base;
-            for (let key of Object.keys(base)) {
-                if (key.startsWith("$")) {
-                    // need to be process
-                }
-            }
-        }
+        // for (let id in this.database) {
+        //     let obj = this.database[id];
+        //     let base = obj.base;
+        //     for (let key of Object.keys(base)) {
+        //         if (key.startsWith("$")) {
+        //             // need to be process
+        //         }
+        //     }
+        // }
 
         // Apply reference
 
@@ -101,13 +89,14 @@ export class Nymph {
         }
     }
 
-    mergeRecord(obj: {
-        base: object,
-        patches: object[],
-    }) {
-        this.operators.forEach((op) => {
-            op.apply(obj.base, obj.patches)
-        })
+    applyPlugin(base: object, patches: object[]): object {
+        const op = new ObjectOperator();
+        op.merger = this;
+
+        for (let patch of patches) {
+            base = op.apply(base, patch);
+        }
+        return base;
     }
 
     private processArray() {
@@ -177,7 +166,7 @@ export class Nymph {
         const path = accessor.split(".")
         path[path.length - 1] = path[path.length - 1].split("/")[0]
 
-        let obj = this.database[id]
+        let obj: object | any[] = this.database[id];
         for (let key of path) {
             if (obj[key] == undefined) {
                 return {}

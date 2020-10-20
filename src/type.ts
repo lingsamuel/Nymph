@@ -44,10 +44,6 @@ export type PatchListKeepElement = {
     }
 } & PatchKeep;
 
-export type ListElementMatcherDef = ElementMatcherDef | number | "-" | EntryReference;
-
-export type ListMatcherStrategy = "first" | "last" | "all";
-
 export type ListPropertyPatch = {
     "$list-strategy": "replace",
 } | ({
@@ -55,7 +51,12 @@ export type ListPropertyPatch = {
 } & Partial<ListRemoveDef | ListMutateDef | PatchListKeepElement>
     );
 
-export function isObject(value: any) {
+export function isPrimitive(value): value is number | string | boolean {
+    return typeof value == "number" || typeof value == "string" || typeof value == "boolean";
+}
+
+
+export function isObject(value) {
     // Basic check for Type object that's not null
     if (typeof value === "object" && value !== null) {
         // If Object.getPrototypeOf supported, use it

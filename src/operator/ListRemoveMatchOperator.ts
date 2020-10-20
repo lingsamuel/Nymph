@@ -1,20 +1,19 @@
 import {Operator} from "./Operator";
 import {ListElementMatcher, ElementMatcherDef} from "./ListMatcher";
 
-export type ListRemoveMatcherDef = {
-    "$list-remove-matcher": ElementMatcherDef[];
+export type ListRemoveMatchDef = {
+    "$value": any[],
+    "$list-remove-match": ElementMatcherDef[];
 }
 
-export class ListRemoveMatcherOperator extends Operator {
+export class ListRemoveMatchOperator extends Operator {
 
-    op(): string {
-        return "$list-remove-matcher";
+    op(): "$list-remove-match" {
+        return "$list-remove-match";
     }
 
-    apply(base: object[], patch: {
-        "$value": any[]
-    } & ListRemoveMatcherDef): object[] {
-        const op: ElementMatcherDef[] = patch[this.op()];
+    apply(base: object[], patch: ListRemoveMatchDef): object[] {
+        const op = patch[this.op()];
         if (op != undefined) {
             const matcher = new ListElementMatcher(op);
             const idx = matcher.match(base);

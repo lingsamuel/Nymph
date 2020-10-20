@@ -32,6 +32,14 @@ Example in this documentation doesn't contain this part.
 
 A plugin and master plugins it depends on call `plugin group`.
 
+### Type
+
+- Number
+- String
+- Boolean
+- List/Array
+- Object
+
 ### Reference String
 
 Single Reference:
@@ -50,7 +58,7 @@ List Reference (Only for arrays):
 
 Won't support reverse index:
 
-*Nymph* aims to be a simple object database patch tool, which means the patch should know everything it wants to change.
+Nymph aims to be a simple object database patch tool, which means the patch should know everything it wants to change.
 
 - `obj-id#path.to.arr/-`: select from array key path "path.to.arr", last element - won't support
 
@@ -261,7 +269,7 @@ const c = {
       "0-1", // clear index from 0 to 1
       "!4", // except index 4
     ],
-    "$list-remove-matcher": [
+    "$list-remove-match": [
       { // ListMatcher
         "$find-strategy": "first",
         "$matcher": {

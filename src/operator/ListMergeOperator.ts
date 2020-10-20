@@ -1,40 +1,44 @@
 import {Operator} from "./Operator";
 import {logger} from "../merger";
+import {ListMutateDef, ListMutateOperator} from "./ListMutateOperator";
+import {isObject} from "../type";
 import {ListRemoveDef, ListRemoveOperator} from "./ListRemoveOperator";
-import {ListRemoveMatcherOperator, ListRemoveMatcherDef} from "./ListRemoveMatcherOperator";
-import {ListMutateOperator} from "./ListMutateOperator";
+import {ListRemoveMatchDef, ListRemoveMatchOperator} from "./ListRemoveMatchOperator";
 
-type ListMergeReplaceDef = {
-    "$list-strategy": "replace",
-};
-
-type ListMergeMergeDef = {
-    "$list-strategy": "append" | "prepend",
-} & Partial<ListRemoveDef> & Partial<ListRemoveMatcherDef>;
-
-export type ListMergeDef = ListMergeReplaceDef | ListMergeMergeDef;
+export type ListMergeDef = {
+    "$value": any[],
+    "$list-strategy": "replace" | "append" | "prepend",
+} | any[];
 
 export class ListMergeOperator extends Operator {
 
-    op(): string {
+    op(): "$list-strategy" {
         return "$list-strategy";
     }
 
-    apply(base: object[], patch: {
-        "$value": any[]
-    } & ListMergeDef): object[] {
-        let strategy = patch[this.op()];
-        if (strategy == undefined) {
-            strategy = "append";
-            patch[this.op()] = strategy;
+    apply(base: object[], patch: ListMergeDef & Partial<ListMutateDef & ListRemoveDef & ListRemoveMatchDef>): object[] {
+        if (Array.isArray(patch)) {
+            // base value is array，patch value is array，applying default strategy `append`
+            base.push(...patch);
+            return base;
+        } else if (!isObject(patch)) {
+            // other cases are invalid
+            logger.log(`Cannot merge ${patch} to array ${base})`);
+            return base;
         }
+
+        let strategy = patch[this.op()];
         if (strategy == "replace") {
             return patch["$value"];
         }
 
-        base = this.newOp(ListRemoveOperator).apply(base, patch);
-        base = this.newOp(ListRemoveMatcherOperator).apply(base, patch);
-        base = this.newOp(ListMutateOperator).apply(base, patch);
+        if (strategy == undefined) {
+            strategy = "append";
+        }
+
+        base = this.newOp(ListRemoveOperator).apply(base, patch as ListRemoveDef);
+        base = this.newOp(ListRemoveMatchOperator).apply(base, patch as ListRemoveMatchDef);
+        base = this.newOp(ListMutateOperator).apply(base, patch as ListMutateDef);
 
         // 处理 list-operator
         let newList = patch["$value"];

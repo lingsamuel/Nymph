@@ -6,8 +6,6 @@ const a = {
     "$id": "objA",
     "propToKeep": "keep",
     "propToKeep2": "keep2",
-    "propToKeepRef": "keep-ref",
-    "propToBeRef": "keep-ref",
 }
 
 const patch = [{
@@ -15,9 +13,6 @@ const patch = [{
     "$keep": [
         "propToKeep"
     ],
-    "propToKeepRef": {
-        "$keep-ref": "objA#propToBeRef"
-    }
 }, {
     "$id": "objA",
     "$keep": "propToKeep2",
@@ -28,10 +23,8 @@ test("keep", () => {
     const nymph = new Nymph(...buildPlugins(a, patch));
     console.log(nymph.processed)
 
-    // keep & keep-ref
+    // keep
     expect(nymph.processed["objA"]["$keep-prop"].length).toBe(2);
     expect(nymph.processed["objA"]["$keep-prop"][0]).toBe("propToKeep");
     expect(nymph.processed["objA"]["$keep-prop"][1]).toBe("propToKeep2");
-    expect(nymph.processed["objA"]["propToKeepRef"]["$keep-ref"]).toBe("objA#propToBeRef");
-    expect(nymph.processed["objA"]["propToKeepRef"]["$value"]).toBe("keep-ref");
 });
