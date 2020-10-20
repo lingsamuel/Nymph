@@ -10,7 +10,8 @@
     "removeComments": true,
     "sourceMap": true,
     "target": "ESNext",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "esModuleInterop": true
   },
   "include": [
     "./src/**/*"

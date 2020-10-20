@@ -20,6 +20,13 @@ export class NymphPlugin {
     name: string;
     masters: string[] = [];
     objects: NymphObject[] = [];
+
+    constructor(...objs: NymphObject[]) {
+        this.objects = objs;
+    }
+    addObj(...objs: NymphObject[]) {
+        this.objects.push(...objs);
+    }
 }
 
 export class Nymph {
@@ -47,6 +54,10 @@ export class Nymph {
         this.addOp(new AttributesKeepOperator());
         this.plugins = plugins;
         this.constructDatabase();
+    }
+
+    addPlugin(...plugins: NymphPlugin[]){
+        this.plugins.push(...plugins);
     }
 
     private constructDatabase() {

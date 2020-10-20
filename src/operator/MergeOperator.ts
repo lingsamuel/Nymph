@@ -72,10 +72,11 @@ export class MergeOperator extends Operator {
                                 base[key]["$keep"] = [base[key]["$keep"]];
                             }
                         } else if (patchProp["$keep-ref"] != undefined) {
-                            base[key]["$keep-ref"] = patchProp["$keep-ref"];
-                            if (typeof base[key]["$keep-ref"] == "string") {
-                                base[key]["$keep-ref"] = [base[key]["$keep-ref"]];
+                            if (typeof patchProp["$keep-ref"] != "string") {
+                                logger.log(`Operator keep-ref ${patchProp["$keep-ref"]} should be string`);
+                                return base;
                             }
+                            base[key]["$keep-ref"] = patchProp["$keep-ref"];
                         }
                         if (patchProp["$remove"] != undefined) {
                             base[key] = {
