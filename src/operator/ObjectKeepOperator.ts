@@ -5,7 +5,7 @@ export type ObjectKeepDef = {
     "$keep"?: string[] | string,
 }
 
-export class KeepOperator extends Operator {
+export class ObjectKeepOperator extends Operator {
     op(): "$keep" {
         return "$keep";
     }
@@ -14,8 +14,8 @@ export class KeepOperator extends Operator {
         return "$keep-prop";
     }
 
-    apply(base:NymphPatchObject, patch: ObjectKeepDef): NymphPatchObject {
-        let properties = patch["$keep"];
+    apply(base: NymphPatchObject, patch: ObjectKeepDef): NymphPatchObject {
+        let properties = patch[this.op()];
         if (properties == undefined) {
             return base;
         }

@@ -1,6 +1,6 @@
 import {Operator} from "./Operator";
 import {ElementMatcher, ElementMatcherDef} from "./ListMatcher";
-import {MergeOperator} from "./MergeOperator";
+import {ObjectMergeOperator} from "./ObjectMergeOperator";
 import {logger, NymphDataType} from "../merger";
 import {isArray, isObject, isPrimitive} from "../type";
 import {ListMergeOperator} from "./ListMergeOperator";
@@ -51,7 +51,7 @@ export class ListMutateOperator extends Operator {
             } else if (mutateOp["$strategy"] == "merge") {
                 const baseValue = base[idx[0]];
                 if (isObject(baseValue)) {
-                    base[idx[0]] = this.newOp(MergeOperator).apply(baseValue, patchObject);
+                    base[idx[0]] = this.newOp(ObjectMergeOperator).apply(baseValue, patchObject);
                 } else if (isArray(baseValue)) {
                     base[idx[0]] = this.newOp(ListMergeOperator).apply(baseValue, patchObject);
                 } else if (isPrimitive(baseValue)) {

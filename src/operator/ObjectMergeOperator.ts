@@ -1,31 +1,26 @@
-import {logger, NymphDataObject, NymphDataType, NymphPatchObject, NymphWrappedDataType} from "../merger";
+import {logger, NymphDataObject, NymphDataType, NymphPatchObject} from "../merger";
 import {Operator} from "./Operator";
 import {ListMergeOperator} from "./ListMergeOperator";
 import {isArray, isObject, isPrimitive} from "../type";
 import {ObjectOperator} from "./ObjectOperator";
 
 
-export type MergeStrategyType = "merge" | "replace" | "replace-exist" | "add-new";
+export type ObjectMergeStrategyType = "merge" | "replace" | "replace-exist" | "add-new";
 
-export type MergeDef = {
-    "$strategy"?: MergeStrategyType,
+export type ObjectMergeDef = {
+    "$strategy"?: ObjectMergeStrategyType,
 }
 
 export type ImportDef = {
     "$import"?: string,
 }
 
-export type PropertyKeepDef = {
-    "$keep"?: "ref" | "exist",
-    "$keep-ref"?: string,
-}
-
-export class MergeOperator extends Operator {
+export class ObjectMergeOperator extends Operator {
     op(): "$strategy" {
         return "$strategy";
     }
 
-    apply(base: NymphPatchObject, patch: NymphDataObject & MergeDef): NymphPatchObject {
+    apply(base: NymphPatchObject, patch: NymphDataObject & ObjectMergeDef): NymphPatchObject {
         let strategy = patch[this.op()];
         if (strategy == undefined) {
             strategy = "merge";
@@ -46,46 +41,6 @@ export class MergeOperator extends Operator {
                 } else if (isArray(baseProp) && (isArray(patchProp) || isObject(patchProp))) {
                     // base value is array，patch value is object, applying list-merge
                     base[key] = this.newOp(ListMergeOperator).apply(baseProp, patchProp)
-                } else if (isPrimitive(baseProp) && isObject(patchProp)) {
-                    // base value is primitive，patch value is object，possible $import/$remove/$keep/$keep-ref
-                    const validProperties = ["$value", "$remove", "$keep", "$keep-ref"];
-                    let containsValidProp = false;
-                    for (let validProperty of validProperties) {
-                        if (patchProp[validProperty]) {
-                            containsValidProp = true;
-                            break;
-                        }
-                    }
-                    if (!containsValidProp) {
-                        logger.log(`[StrategyOperator] Unknown patch ${patchProp} to ${baseProp}. Key ${key}.`);
-                        continue;
-                    }
-                    // base prop turns to be a obj
-                    const wrapped: NymphWrappedDataType = {
-                        "$value": baseProp,
-                    }
-                    if (patchProp["$value"] != undefined) {
-                        wrapped["$value"] = patchProp["$value"];
-                    }
-                    if (patchProp["$keep"] == "exist") {
-                        wrapped["$keep"] = patchProp["$keep"];
-                        // if (typeof wrapped["$keep"] == "string") {
-                        //     wrapped["$keep"] = "exist";
-                        // }
-                    } else if (/*patchProp["$keep"] == "ref" && */patchProp["$keep-ref"] != undefined) {
-                        if (typeof patchProp["$keep-ref"] != "string") {
-                            logger.log(`Operator keep-ref ${patchProp["$keep-ref"]} should be string`);
-                            return base;
-                        }
-                        wrapped["$keep"] = "ref";
-                        wrapped["$keep-ref"] = patchProp["$keep-ref"];
-                    }
-                    const removeOp = patchProp["$remove"];
-                    if (removeOp != undefined) {
-                        wrapped["$remove"] = patchProp["$remove"];
-                    }
-
-                    base[key] = wrapped;
                 } else if (isPrimitive(baseProp) && isPrimitive(patchProp)) {
                     // both are primitive, replace
                     base[key] = patchProp;

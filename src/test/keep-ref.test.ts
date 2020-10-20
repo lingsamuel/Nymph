@@ -1,4 +1,4 @@
-import {Nymph, NymphObject, NymphPlugin, NymphWrappedDataType} from "../merger";
+import {Nymph, NymphObject} from "../merger";
 import {describe, expect, test} from '@jest/globals'
 import {buildPlugins} from "./utils";
 
@@ -10,8 +10,8 @@ const a : NymphObject = {
 
 const patch : NymphObject[] = [{
     "$id": "objA",
-    "propToKeepRef": {
-        "$keep-ref": "objA#propToBeRef"
+    "$keep-ref": {
+        "propToKeepRef": "objA#propToBeRef"
     }
 }
 ];
@@ -21,6 +21,6 @@ test("keep", () => {
     console.log(nymph.processed)
 
     // keep-ref
-    expect((nymph.processed["objA"]["propToKeepRef"] as NymphWrappedDataType)["$keep-ref"]).toBe("objA#propToBeRef");
-    expect((nymph.processed["objA"]["propToKeepRef"] as NymphWrappedDataType)["$value"]).toBe("keep-ref");
+    expect(nymph.processed["objA"]["$keep-ref-prop"]["propToKeepRef"]).toBe("objA#propToBeRef");
+    expect(nymph.processed["objA"]["propToKeepRef"]).toBe("keep-ref");
 });

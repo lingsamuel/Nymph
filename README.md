@@ -141,6 +141,8 @@ If `$import-pick` occurs, only given path properties will be selected.
 
 If `$import-no-pick` occurs, given path properties won't be selected. `$import-pick` has higher priority.
 
+If `$import-map` occurs, it has higher priority. 
+
 If properties definition also occurs in same level, they have higher priority.
 
 <details>
@@ -174,10 +176,17 @@ const patch = {
         ],
         "$import": "t2#obj",
         "$strategy": "merge",
-        "key": {
-            "$keep-ref": "t3#obj.key",
-            "$value": "t3#obj.key"
-        }
+
+        "$keep-ref": {
+            "key": "t3#obj.key",
+        },
+        "$import-map": {
+            "key": "t3#obj.key"
+        },
+//      "key": { // "Expand" primitive field to a object perhaps is a bad idea 
+//          "$keep-ref": "t3#obj.key",
+//          "$value": "t3#obj.key"
+//      }
     }
 }
 
@@ -207,6 +216,10 @@ Defines which property `$import` should pick.
 Type: `List<RelativeReference>`
 
 Defines which property `$import` should not pick.
+
+#### `$import-map` (WIP)
+
+Type: `Map<KeyName, Reference>`
 
 ### `$strategy`
 
@@ -309,7 +322,7 @@ Flags won't change any operator behavior, it only raises warnings if violates fl
 
 ### `$keep`
 
-Type: `Enum`.
+Type: `List<KeyName>`.
 
 `$keep` operator also is a *flag*.
 
@@ -324,7 +337,7 @@ Available values:
 
 #### `$keep-ref`
 
-Type: `Reference`.
+Type: `Map<KeyName, Reference>`.
 
 This flag indicates the final value of this property should be same as the given reference.
 

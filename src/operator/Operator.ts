@@ -8,9 +8,9 @@ export abstract class Operator {
     abstract op(): string;
 
     abstract apply(
-        base: NymphOperatorDataType,
-        patches: NymphOperatorType,
-    ): NymphOperatorDataType;
+        base: any,
+        patches: any,
+    ): any;
 
     newOp<T extends Operator>(ctor: new() => T): T {
         const op = new ctor();

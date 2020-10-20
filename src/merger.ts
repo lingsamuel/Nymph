@@ -1,12 +1,12 @@
 import {isObject} from "./type";
 import {ObjectOperator} from "./operator/ObjectOperator";
-import {ObjectKeepDef} from "./operator/KeepOperator";
-import {RemoveDef} from "./operator/RemoveOperator";
+import {ObjectKeepDef} from "./operator/ObjectKeepOperator";
 import {ListMutateDef} from "./operator/ListMutateOperator";
 import {ListRemoveDef} from "./operator/ListRemoveOperator";
 import {ListRemoveMatchDef} from "./operator/ListRemoveMatchOperator";
 import {ListMergeDef} from "./operator/ListMergeOperator";
-import {ImportDef, MergeDef, PropertyKeepDef} from "./operator/MergeOperator";
+import {ImportDef, ObjectMergeDef} from "./operator/ObjectMergeOperator";
+import {ObjectRemoveDef} from "./operator/ObjectRemoveOperator";
 
 class Logger {
     log(...args: any[]) {
@@ -18,15 +18,9 @@ export const logger = new Logger();
 
 export type NymphPrimitiveType = number | string | boolean;
 
-export type NymphDirectDataType = NymphPrimitiveType | NymphDataType[] | NymphPatchObject;
+export type NymphDataType = NymphPrimitiveType | NymphDataType[] | NymphPatchObject;
 
-export type NymphWrappedDataType = {
-    "$value": NymphDirectDataType,
-} & RemoveDef & PropertyKeepDef & ImportDef;
-
-export type NymphDataType = NymphDirectDataType | NymphWrappedDataType;
-
-export type NymphOperatorType = MergeDef & ImportDef & RemoveDef & ObjectKeepDef &
+export type NymphOperatorType = ObjectMergeDef & ImportDef & ObjectRemoveDef & ObjectKeepDef &
     ListMergeDef & ListMutateDef & ListRemoveDef & ListRemoveMatchDef;
 
 export type NymphObjectPropertyFlag = {
