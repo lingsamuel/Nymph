@@ -135,13 +135,15 @@ const result = {
 ```
 </details>
 
-The `$import` can also combined with `$strategy`.
+The `$import` can also combine with `$strategy`.
 
 If `$import-pick` occurs, only given path properties will be selected.
 
 If `$import-no-pick` occurs, given path properties won't be selected. `$import-pick` has higher priority.
 
 If `$import-map` occurs, it has higher priority. 
+
+If common properties occurs, they have higher priority.
 
 If properties definition also occurs in same level, they have higher priority.
 

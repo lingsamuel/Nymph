@@ -3,6 +3,7 @@ import {Operator} from "./Operator";
 import {ListMergeOperator} from "./ListMergeOperator";
 import {isArray, isObject, isPrimitive} from "../type";
 import {ObjectOperator} from "./ObjectOperator";
+import {ImportOperator} from "./ImportOperator";
 
 
 export type ObjectMergeStrategyType = "merge" | "replace" | "replace-exist" | "add-new";
@@ -25,6 +26,7 @@ export class ObjectMergeOperator extends Operator {
         if (strategy == undefined) {
             strategy = "merge";
         }
+        patch = this.newOp(ImportOperator).apply(base, patch);
         if (strategy == "merge") {
             for (let key of Object.keys(patch)) {
                 if (key.startsWith("$")) {

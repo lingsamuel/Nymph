@@ -16,7 +16,7 @@ const patch : NymphObject[] = [{
 }
 ];
 
-test("keep", () => {
+test("keep-ref", () => {
     const nymph = new Nymph(...buildPlugins(a, patch));
     console.log(nymph.processed)
 
