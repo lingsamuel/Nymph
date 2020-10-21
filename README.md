@@ -68,7 +68,7 @@ Nymph aims to be a simple object database patch tool, which means the patch shou
 
 ## Non-List Operator
 
-### `$import` (WIP)
+### `$import`
 
 Type: `Reference`.
 
