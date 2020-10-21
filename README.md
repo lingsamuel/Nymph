@@ -196,30 +196,36 @@ const patch = {
 
 const result = {
     "obj": {
-        "$keep": [
+        "$keep-prop": [
             "key"
         ],
-        "key": {
-            "$keep-ref": "t3#obj.key",
-            "$value": "want-val",
+        "$keep-ref-prop": {
+            "key": "t3#obj.key",
         },
+        "key": "want-val",
         "another-key": "val"
     }
 }
 ```
 </details>
 
-#### `$import-pick` (WIP)
+#### `$import-pick`
 
-Type: `List<RelativeReference>`
+Type: `List<KeyName>`
 
 Defines which property `$import` should pick.
 
-#### `$import-no-pick` (WIP)
+#### `$import-no-pick`
 
-Type: `List<RelativeReference>`
+Type: `List<KeyName>`
 
 Defines which property `$import` should not pick.
+
+#### `$import-strategy`
+
+Type: `Map<KeyName, Strategy | ListStrategy>`
+
+Defines how object or array property merge.
 
 #### `$import-map` (WIP)
 
