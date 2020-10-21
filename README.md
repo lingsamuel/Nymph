@@ -335,18 +335,11 @@ Type: `List<String>`.
 
 Type: `List<KeyName>`.
 
-`$keep` operator also is a *flag*.
-
 Property has `$keep` flag indicates that the plugin requires its existence to work properly and shouldn't be removed by other plugins.
 
 Note that `$keep` flag won't reject `$remove` or `$strategy=replace` operator, only raise warnings if violated.
 
-Available values:
-- exist (default): This flag warning if any plugin wants to remove this property.
-- none: Use `remove`.
-- ref: Meaningless. See [`$keep-ref`](#keep-ref). If `ref` is set, a `$keep-ref` operator must be set, too.
-
-#### `$keep-ref`
+### `$keep-ref`
 
 Type: `Map<KeyName, Reference>`.
 
@@ -359,3 +352,5 @@ This adds `$keep` flag to the matched elements.
 Note that `$keep` flag won't reject `$list-mutate` or `$list-strategy=replace` operator, only raise warnings if violated.
 
 ### `$list-keep-ref` (WIP)
+
+This adds `$keep-ref` flag to the matched elements.
