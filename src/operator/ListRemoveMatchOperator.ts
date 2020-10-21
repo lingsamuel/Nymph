@@ -1,5 +1,5 @@
 import {Operator} from "./Operator";
-import {ListElementMatcher, ElementMatcherDef} from "./ListMatcher";
+import {ElementMatcherDef, ListElementMatcher} from "./ListMatcher";
 import {NymphDataType} from "../merger";
 import {ListOpDef} from "./ListOperator";
 

@@ -193,7 +193,7 @@ export class Nymph {
     }
 
     parseReference(ref: string): NymphDataType {
-        if (!ref.includes("#")){
+        if (!ref.includes("#")) {
             return this.database[ref].base;
         }
         const id = ref.split("#")[0]

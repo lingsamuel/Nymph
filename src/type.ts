@@ -6,10 +6,7 @@
 // type Punctuation = "_" | "-"
 // type ValidChar = Alpha | Digit | Punctuation;
 
-import {ListMutateDef} from "./operator/ListMutateOperator";
-import {ElementMatcherDef} from "./operator/ListMatcher";
-import {ListRemoveDef} from "./operator/ListRemoveOperator";
-import {NymphDataType, NymphPatchObject, NymphPrimitiveType} from "./merger";
+import {NymphPatchObject, NymphPrimitiveType} from "./merger";
 
 export function isArray(value: any): value is NymphPatchObject[] {
     return Array.isArray(value);

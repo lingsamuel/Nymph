@@ -1,6 +1,5 @@
-import {logger, NymphPatchObject} from "../merger";
+import {NymphPatchObject} from "../merger";
 import {Operator} from "./Operator";
-import {isObject, isPrimitive} from "../type";
 
 export type ObjectKeepRefDef = {
     "$keep-ref"?: {

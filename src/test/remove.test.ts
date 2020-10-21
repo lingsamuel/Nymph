@@ -1,13 +1,13 @@
-import {Nymph, NymphObject, NymphPlugin} from "../merger";
-import {describe, expect, test} from '@jest/globals'
+import {Nymph, NymphObject} from "../merger";
+import {expect, test} from '@jest/globals'
 import {buildPlugins} from "./utils";
 
-const a : NymphObject = {
+const a: NymphObject = {
     "$id": "objA",
     "toBeDelete": "val",
 }
 
-const patch : NymphObject[] = [{
+const patch: NymphObject[] = [{
     "$id": "objA",
     "$remove": "toBeDelete",
 }

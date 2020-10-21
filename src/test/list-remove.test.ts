@@ -1,5 +1,5 @@
-import {Nymph, NymphDataType, NymphObject, NymphPlugin} from "../merger";
-import {describe, expect, test} from '@jest/globals'
+import {Nymph, NymphDataType, NymphObject} from "../merger";
+import {expect, test} from '@jest/globals'
 import {buildPlugins} from "./utils";
 
 const a: NymphObject = {

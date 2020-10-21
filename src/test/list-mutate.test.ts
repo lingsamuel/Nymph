@@ -1,8 +1,8 @@
-import {Nymph, NymphDataType, NymphObject, NymphPlugin} from "../merger";
-import {describe, expect, test} from '@jest/globals'
+import {Nymph, NymphDataType, NymphObject} from "../merger";
+import {expect, test} from '@jest/globals'
 import {buildPlugins} from "./utils";
 
-const a : NymphObject = {
+const a: NymphObject = {
     "$id": "objA",
     "arrToMutate": [
         {
@@ -20,7 +20,7 @@ const a : NymphObject = {
     ],
 }
 
-const patch : any[] = [{
+const patch: any[] = [{
     "$id": "objA",
     "arrToMutate": { // Compiler treats this field as type `NymphDataType` and raises error
         "$value": [

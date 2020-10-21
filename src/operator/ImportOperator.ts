@@ -50,7 +50,7 @@ export class ImportOperator extends Operator {
                 if (importStrategy[key] != undefined && typeof importStrategy[key] == "string") {
                     if (isObject(patch[key])) {
                         patch[key]["$strategy"] = importStrategy[key];
-                    } else if(Array.isArray(patch[key])) {
+                    } else if (Array.isArray(patch[key])) {
                         patch[key] = {
                             "$list-strategy": importStrategy[key],
                             "$value": patch[key],

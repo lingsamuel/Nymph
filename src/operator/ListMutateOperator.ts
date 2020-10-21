@@ -23,7 +23,7 @@ export type ListMutateDef = ListOpDef & {
 }
 
 export class ListMutateOperator extends Operator {
-    op():"$list-mutate" {
+    op(): "$list-mutate" {
         return "$list-mutate";
     }
 
@@ -35,7 +35,7 @@ export class ListMutateOperator extends Operator {
 
         let processedIndexes: number[] = [];
 
-        if (patch["$value"] == undefined || !isArray(patch["$value"]) || patch["$value"].length == 0 ) {
+        if (patch["$value"] == undefined || !isArray(patch["$value"]) || patch["$value"].length == 0) {
             return base;
         }
 

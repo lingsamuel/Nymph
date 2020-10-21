@@ -66,7 +66,7 @@ Nymph aims to be a simple object database patch tool, which means the patch shou
 
 - `obj-id#path.to.arr/-N`: select N-th element from last - won't support
 
-## Non-List Operator
+## Object Operator
 
 ### `$import`
 
@@ -309,7 +309,7 @@ const c = {
 
 ### `$list-mutate`
 
-Type: `List<ListMutatePatch>`.
+Type: `List<ListMutate>`.
 
 Controls elements insert or replace explicitly. Not listed elements follows the `$list-strategy` operator.
 

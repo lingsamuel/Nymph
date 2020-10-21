@@ -1,4 +1,4 @@
-import {Nymph, NymphDataType, NymphOperatorType, NymphPatchObject} from "../merger";
+import {Nymph, NymphDataType, NymphPatchObject} from "../merger";
 
 type NymphOperatorDataType = NymphPatchObject | NymphDataType;
 
