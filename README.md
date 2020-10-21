@@ -245,12 +245,6 @@ Available values:
 
 `$strategy` doesn't control list. List strategy is special, see `$list-strategy`.
 
-### `$remove`
-
-Type: `List<String>`.
-
-`$remove` contains a name list of property which should be removed.
-
 ## List Operator
 
 ### `$list-strategy`
@@ -321,14 +315,21 @@ Controls elements insert or replace explicitly. Not listed elements follows the 
 
 ## Flag Operator
 
-Flag operators add flags to properties.
+Flag operators add validators to object.
 
 All available flags:
 
+- `$remove`: Remove listed properties and indicates they should be removed.
 - `$keep`: Indicates property shouldn't be removed.
 - `$keep-ref`: Indicates property value should exactly same as a reference.
 
-Flags won't change any operator behavior, it only raises warnings if violates flag semantics.
+Flags won't change any other operator behavior, it only raises warnings if violates flag semantics.
+
+### `$remove`
+
+Type: `List<String>`.
+
+`$remove` contains a name list of property which should be removed.
 
 ### `$keep`
 
