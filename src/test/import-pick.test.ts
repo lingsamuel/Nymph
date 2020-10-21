@@ -2,7 +2,7 @@ import {Nymph, NymphObject, NymphPlugin} from "../merger";
 import {describe, expect, test} from '@jest/globals'
 import {buildPlugins} from "./utils";
 
-const a : NymphObject[] = [{
+const a: NymphObject[] = [{
     "$id": "objA",
     "attr1": "origin",
 }, {
@@ -12,18 +12,22 @@ const a : NymphObject[] = [{
     "attr3": "attr3",
 }]
 
-const patch : NymphObject[] = [{
+const patch: NymphObject[] = [{
     "$id": "objA",
-    "$import": "objB"
+    "$import": "objB",
+    "$import-pick": [
+        "attr1",
+        "attr2",
+    ],
 }
 ];
 
-test("import", () => {
+test("import-pick", () => {
     const nymph = new Nymph(...buildPlugins(a, patch));
     console.log(nymph.processed)
 
     // import
     expect(nymph.processed["objA"]["attr1"]).toBe("attr1")
     expect(nymph.processed["objA"]["attr2"]).toBe("attr2")
-    expect(nymph.processed["objA"]["attr3"]).toBe("attr3")
+    expect(nymph.processed["objA"]["attr3"]).toBe(undefined)
 });

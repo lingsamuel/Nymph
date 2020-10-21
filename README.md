@@ -137,6 +137,8 @@ const result = {
 
 The `$import` can also combine with `$strategy`.
 
+If `$import-strategy` occurs, it controls the object and array fields merge strategy.
+
 If `$import-pick` occurs, only given path properties will be selected.
 
 If `$import-no-pick` occurs, given path properties won't be selected. `$import-pick` has higher priority.
