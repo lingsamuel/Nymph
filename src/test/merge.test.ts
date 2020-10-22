@@ -16,6 +16,13 @@ const a: NymphObject = {
     "objToMerge": {
         "attr": "attr",
     },
+    "objToMergeExist": {
+        "obj": {
+            "attr": "attr",
+            "exist": "attr",
+        },
+        "attr": "attr",
+    },
 };
 
 const patch: NymphObject[] = [{
@@ -39,6 +46,15 @@ const patch: NymphObject[] = [{
         "attr": "attr-changed",
         "new": "new-attr",
     },
+    "objToMergeExist": {
+        "$strategy": "merge-exist",
+        "obj": {
+            "attr": "attr-changed",
+            "attr2": "new-attr",
+        },
+        "attr": "attr-changed",
+        "attr2": "new-attr",
+    },
 }
 ];
 
@@ -56,5 +72,11 @@ test("merge", () => {
     // Merge
     expect(nymph.processed["objA"]["objToMerge"]["attr"]).toBe("attr-changed");
     expect(nymph.processed["objA"]["objToMerge"]["new"]).toBe("new-attr");
+    // Merge-exist
+    expect(nymph.processed["objA"]["objToMergeExist"]["attr"]).toBe("attr-changed");
+    expect(nymph.processed["objA"]["objToMergeExist"]["attr2"]).toBe(undefined);
+    expect(nymph.processed["objA"]["objToMergeExist"]["obj"]["exist"]).toBe("attr");
+    expect(nymph.processed["objA"]["objToMergeExist"]["obj"]["attr"]).toBe("attr-changed");
+    expect(nymph.processed["objA"]["objToMergeExist"]["obj"]["attr2"]).toBe("new-attr");
 });
 

@@ -237,8 +237,11 @@ Type: `Enum`.
 
 `$strategy` points how object merge works.
 
+The only strategy primitive types have is `replace`. 
+
 Available values:
 - merge (default): will add all new properties and replace all existed properties to object. Unlisted properties keep unchanged.
+- merge-exist: adds nothing, only merges all existed properties to object.
 - replace: Replace whole object. This doesn't control the list property.
 - replace-exist: adds nothing, only replaces all existed properties to object.
 - add-new: replaces nothing, only adds all new properties to object.

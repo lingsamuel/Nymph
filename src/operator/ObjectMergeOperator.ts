@@ -6,7 +6,7 @@ import {ObjectOperator} from "./ObjectOperator";
 import {ImportOperator} from "./ImportOperator";
 
 
-export type ObjectMergeStrategyType = "merge" | "replace" | "replace-exist" | "add-new";
+export type ObjectMergeStrategyType = "merge" | "merge-exist" | "replace" | "replace-exist" | "add-new";
 
 export type ObjectMergeDef = {
     "$strategy"?: ObjectMergeStrategyType,
@@ -52,6 +52,20 @@ export class ObjectMergeOperator extends Operator {
                     continue;
                 }
             }
+        } else if (strategy == "merge-exist") {
+            let existKeys: string[] = Object.keys(base);
+
+            let newPatch: NymphPatchObject = {}
+            for (let key of Object.keys(patch)) {
+                if (key.startsWith("$")) {
+                    continue;
+                }
+
+                if (existKeys.includes(key)) {
+                    newPatch[key] = patch[key];
+                }
+            }
+            this.newOp(ObjectOperator).apply(base, newPatch);
         } else if (strategy == "replace") {
             for (let key of Object.keys(base)) {
                 if (key.startsWith("$")) {
